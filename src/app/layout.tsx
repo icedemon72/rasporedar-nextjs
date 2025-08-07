@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { SessionProvider } from "@/context/SessionContext";
-
 import ToastContainer from "@/components/providers/toast/ToastContainer";
 import Navbar from "@/components/ui/nav/Navbar";
-import { getUserFromCookie } from "@/utils/session";
-import { SiteSettingsProvider } from "@/context/SiteSettingsContext";
 import { getSiteSettings } from "@/lib/payloadcms/payloadcms";
+import { SiteSettingsProvider } from "@/context/site-settings-context";
+import { AuthProvider } from "@/context/auth-context";
+import { getCurrentUserServer } from "@/lib/auth/auth-server";
+import { ApiProvider } from "@/context/api-context";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -29,23 +29,31 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const user = await getUserFromCookie();
+  const initialUser = await getCurrentUserServer()
   const settings = await getSiteSettings();
 
   return (
     <html lang="en">
       <head></head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased dark`}
       >
-        <SiteSettingsProvider value={null}>
-          <SessionProvider>
-            <Navbar navigationBar={settings.navigationBar} userLoggedIn={!!user} />
-            {children}
+          <AuthProvider initialUser={initialUser}>
+            <ApiProvider>
+              <SiteSettingsProvider value={null}>
+                <div className="min-h-screen h-screen w-screen flex flex-col md:grid grid-cols-[auto_1fr]">
+                  <Navbar navigationBar={settings.navigationBar} userLoggedIn={initialUser} />
+                  <div className="flex flex-col overflow-hidden">
+                    <main className="flex-1 bg-muted/10 overflow-x-hidden bg-primary">
+                      {children}
+                    </main>
+                  </div>
+                </div>
 
-            <ToastContainer />
-          </SessionProvider>
-        </SiteSettingsProvider>
+                <ToastContainer />
+              </SiteSettingsProvider>
+            </ApiProvider>
+          </AuthProvider>
       </body>
     </html>
   );

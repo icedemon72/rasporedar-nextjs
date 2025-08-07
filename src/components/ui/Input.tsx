@@ -2,35 +2,38 @@
 
 import React, { HTMLInputTypeAttribute } from "react";
 
-interface InputProps {
+interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   id: string;
   inputVal: string;
   setVal: (val: string) => void;
   name: string;
-  placeholder: string;
   type: HTMLInputTypeAttribute;
-  disabled?: boolean;
-  min?: number;
-  max?: number;
 }
 
 const Input: React.FC<InputProps> = ({ 
-  id, inputVal, setVal, name, placeholder, type, disabled = false, min, max
+  id, 
+	inputVal, 
+	setVal, 
+	name,
+	type, 
+	disabled = false, 
+	required = true, 
+	...rest 
 }) => {
 	return (
 		<div className='form-control'>
-			<label htmlFor={id} className="block w-full font-semibold">
+			<label htmlFor={id} className="label-primary">
 				{ name }
 			</label>
 				{
 					type !== 'number' ?
 						<input
-							type={type} id={id} name={id} placeholder={placeholder} value={inputVal}onChange={(e) => setVal(e.target.value)} disabled={disabled} required
+							type={type} id={id} name={id}  value={inputVal} onChange={(e) => setVal(e.target.value)} disabled={disabled} {...rest}
 							className="input-primary"
 						/>
 						:
 						<input
-							type={type} id={id} placeholder={name} value={inputVal} onChange={(e) => setVal(e.target.value)} disabled={disabled} autoComplete='off' required min={min} max={max}
+							type={type} id={id} placeholder={name} value={inputVal} onChange={(e) => setVal(e.target.value)} disabled={disabled} autoComplete='off' { ...rest }
 							className="input-primary"
 						/>
 				}

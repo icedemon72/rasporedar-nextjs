@@ -1,6 +1,8 @@
-import LoginClient from "@/components/client/login/LoginClient";
-import { SEOMapper } from "@/lib/seo/seoMapper";
-import { PageProps, SEO } from "@/types/page";
+import LoginClient from '@/components/client/login/LoginClient';
+import { getCurrentUserServer } from '@/lib/auth/auth-server';
+import { SEOMapper } from '@/lib/seo/seoMapper';
+import { PageProps, SEO } from '@/types/page';
+import { redirect } from 'next/navigation';
 
 export async function generateMetadata() {
   const fallback: SEO = {
@@ -18,6 +20,11 @@ export async function generateMetadata() {
 
 export default async function LoginPage({ searchParams }: PageProps) {
   const { redirectTo } = await searchParams;
+
+  const user = await getCurrentUserServer();
+  if (user) {
+    redirect(redirectTo || '/app');
+  }
   
   return (
     <LoginClient redirectTo={redirectTo || '/app'} />

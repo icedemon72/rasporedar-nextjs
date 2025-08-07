@@ -1,23 +1,55 @@
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server'
+import type { NextRequest } from 'next/server'
 
-const protectedPaths = ['/app'];
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'
 
-export function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
-  
-  const isProtected = protectedPaths.some((path) => pathname.startsWith(path));
+// Protected routes that require authentication - updated for /app/app/ structure
+const protectedRoutes = ['/app'];
 
-  const token = request.cookies.get('access_token')?.value;
+export async function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl
 
-  if (isProtected && !token) {
-    const loginUrl = new URL('/auth/login', request.url);
-    loginUrl.searchParams.set('redirectTo', pathname);
-    return NextResponse.redirect(loginUrl);
+  const isProtectedRoute = protectedRoutes.some((route) => pathname.startsWith(route))
+
+  if (isProtectedRoute) {
+    // Get cookies from the request
+    const cookieHeader = request.headers.get('cookie') || ''
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/me`, {
+        headers: {
+          Cookie: cookieHeader,
+        },
+        credentials: 'include',
+      })
+
+      if (!response.ok && response.status === 401) {
+        const refreshResponse = await fetch(`${API_BASE_URL}/refresh`, {
+          method: 'POST',
+          headers: {
+            Cookie: cookieHeader,
+          },
+          credentials: 'include',
+        })
+
+        if (!refreshResponse.ok) {
+          const loginUrl = new URL('/login', request.url)
+          loginUrl.searchParams.set('redirectTo', pathname)
+          return NextResponse.redirect(loginUrl)
+        }
+      }
+    } catch (error) {
+      const loginUrl = new URL('/login', request.url)
+      loginUrl.searchParams.set('redirectTo', pathname)
+      return NextResponse.redirect(loginUrl)
+    }
   }
 
-  // Optionally, you could refresh/set cookie here if you want
+  return NextResponse.next()
+}
 
-  // Allow request
-  return NextResponse.next();
+export const config = {
+  matcher: [
+    '/((?!api|_next/static|_next/image|favicon.ico).*)',
+  ],
 }

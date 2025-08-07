@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import dynamic from 'next/dynamic';
 import { NavLink } from '@/types/nav';
 
@@ -10,17 +10,15 @@ const Sidebar = dynamic(() => import('@/components/ui/nav/Sidebar'), {
 
 interface NavbarClientProps {
   links: NavLink[];
-  userLoggedIn: boolean;
 }
 
 const NavbarClient: React.FC<NavbarClientProps> = ({
-  links,
-  userLoggedIn = true
+  links
 }) => {
   const [ sidebarOpen, setSidebarOpen ] = useState<boolean>(false);
 
   return (
-    <>
+    <div className="flex justify-end">
       <button onClick={() => setSidebarOpen(true)} aria-label="Open sidebar">
         <svg
           className="w-6 h-6"
@@ -41,9 +39,8 @@ const NavbarClient: React.FC<NavbarClientProps> = ({
         links={links}
         onClose={() => setSidebarOpen(false)}
         isOpen={sidebarOpen}
-        userLoggedIn={userLoggedIn}
       />
-    </>
+    </div>
   );
 };
 

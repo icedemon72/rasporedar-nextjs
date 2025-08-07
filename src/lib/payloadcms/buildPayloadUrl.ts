@@ -1,7 +1,7 @@
 import { PayloadQueryParams } from "@/types/payload";
 
 export function buildPayloadURL(base: string, params: PayloadQueryParams = {}): string {
-  const url = new URL(base, process.env.PAYLOAD_CMS_URL);
+  const url = new URL(base, process.env.NEXT_PUBLIC_PAYLOAD_CMS_URL);
   const searchParams = url.searchParams;
 
   if (params.where) {

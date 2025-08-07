@@ -2,11 +2,12 @@
 
 import CardContainer from '@/components/ui/containers/CardContainer';
 import Input from '@/components/ui/Input';
-import MutationState from '@/components/ui/MutationState';
 import Link from 'next/link';
-import { useState, useEffect, useRef } from 'react';
+import { useState } from 'react';
 import { toast } from 'react-toastify';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '@/context/auth-context';
+import { useApi } from '@/context/api-context';
 
 interface LoginClientProps {
   redirectTo: string ;
@@ -15,54 +16,34 @@ interface LoginClientProps {
 const LoginClient: React.FC<LoginClientProps> = ({
   redirectTo = '/app'
 }) => {
+  const router = useRouter();
+  const { setUser } = useAuth();
+  const { client, api } = useApi();
+
   const [ username, setUsername ] = useState<string>('');
   const [ password, setPassword ] = useState<string>('');
-  const [ isLoading, setIsLoading ] = useState<boolean>(false);  
-  const [ isSuccess, setIsSuccess ] = useState<boolean>(false);  
 
-  const router = useRouter();
 
-  const handleLogin = async (event: any) => {
-    event.preventDefault();
-    event.stopPropagation();
-    
-    const body = { username, password };
-
-    try {
-      setIsLoading(true);
-      const response = await fetch(`http://localhost:3001/login`, {
-        method: 'POST',
-        credentials: 'include', // This is crucial to accept cookies from backend
-        headers: {
-          'Content-Type': 'application/json',
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const res = await api(
+      () => client.login(username, password),
+      {
+        onSuccess(data) {
+          setUser(data.user);
+          toast.success('Uspešna prijava');
+          return router.replace(redirectTo ?? '/app');
         },
-        body: JSON.stringify(body),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || 'Login failed');
+        onError(error) {
+          return toast.error(error?.message ?? 'Pogrešni kredencijali');
+        }
       }
-
-      setIsSuccess(true);
-      toast.success(data.message || 'Uspešno prijavljivanje!');
-      router.replace(redirectTo);
-    } catch (err: any) {
-      toast.error(err.message || 'Došlo je do greške pri prijavi');
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    );
+  }
 
   return (
     <>
-			<MutationState
-				isLoading={isLoading}
-				isSuccess={isSuccess}
-        isError={false}
-				successMessage="Uspešno prijavljivanje!"
-			/>
       <CardContainer containerBgClass='bg-day dark:bg-night bg-cover'>
 				<h1 className="text-xl font-bold py-5 text-center">Prijava</h1>
         <form onSubmit={handleLogin}>

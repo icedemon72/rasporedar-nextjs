@@ -2,43 +2,32 @@ import React from 'react';
 import NavbarClient from '@/components/client/navbar/NavbarClient';
 import Link from 'next/link';
 import NavItem from './NavItem';
+import { User } from '@/types/fetch';
+import NavbarAuthSection from '@/components/client/navbar/NavbarAuthSection';
 
 interface NavbarProps {
-  userLoggedIn?: boolean;
+  userLoggedIn?: User | null;
   navigationBar: any;
 }
 
 const Navbar: React.FC<NavbarProps> = ({
-  userLoggedIn = true,
+  userLoggedIn = null,
   navigationBar
 }) => {
-  
   return (
-    <nav className="w-full bg-white shadow px-4 py-2 flex justify-between items-center">
-      <div className="text-xl font-bold">
-        <Link href="/">{ navigationBar.title }</Link>
-      </div>
-      <div className="hidden md:flex space-x-4">
-        {
-          !userLoggedIn && (
-            <>
-              <NavItem link={{ label: 'Prijava', url: '/auth/login' }} />
-              <NavItem link={{ label: 'Registracija', url: '/auth/register' }} />
-            </>
-          )
-        }
-        {
-          userLoggedIn && (
-            <>
-              <NavItem link={{ label: 'Panel', url: '/app' }} />
-            </>
-          )
-        }
+    <nav className="flex flex-col w-full md:w-64 bg-secondary shadow px-4 py-2 h-auto md:h-screen sticky top-0 overflow-y-hidden md:overflow-y-auto">
+      <div className="hidden md:flex md:flex-col md:items-center md:h-full flex-1">
+        <div className="text-xl font-bold">
+          <Link href="/">{ navigationBar.title }</Link>
+        </div>
+        <div className="flex flex-col h-full w-full justify-between">
+          <NavbarAuthSection />
+        </div>
       </div>
     
-        <div className="md:hidden">
-          <NavbarClient links={navigationBar.links} userLoggedIn={userLoggedIn} />
-        </div>
+      <div className="md:hidden">
+        <NavbarClient links={navigationBar.links} />
+      </div>
     </nav>
   );
 }

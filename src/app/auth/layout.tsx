@@ -1,22 +1,18 @@
 import { ReactNode } from 'react';
 import { redirect } from 'next/navigation';
-import { getUserFromCookie } from '@/utils/session';
 import { headers } from 'next/headers';
+import { getCurrentUserServer } from '@/lib/auth/auth-server';
 
 export default async function AuthLayout({ children }: { children: ReactNode }) {
-  const user = await getUserFromCookie();
-  console.log(user);
+  const user = await getCurrentUserServer();
+
   if (user) {
     const currentHeaders = await headers();
-    const referer = currentHeaders.get('x-invoke-pathname') || currentHeaders.get('x-forwarded-path') || '';
-    const currentPath = referer || '/app'; 
-
-    redirect(currentPath);
+    const referer = currentHeaders.get('x-current-path') || '';
+    const currentPath = referer || '/app';
+    
+    redirect('/app');
   }
 
-  return (
-    <>
-      {children}
-    </>
-  );
+  return <>{children}</>;
 }

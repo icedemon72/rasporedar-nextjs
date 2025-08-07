@@ -15,7 +15,7 @@ export async function generateMetadata({ params }: PageProps) {
   const seoMapped = {
     ...seo,
     openGraph: {
-      images: `${process.env.PAYLOAD_CMS_URL}${seo?.openGraph?.images?.url}`
+      images: `${process.env.NEXT_PUBLIC_PAYLOAD_CMS_URL}${seo?.openGraph?.images?.url}`
     }
   }
 

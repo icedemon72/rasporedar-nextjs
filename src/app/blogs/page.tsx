@@ -8,7 +8,7 @@ export async function generateMetadata() {
 
   const fallback = {
     description: 'Pratite najnovije savete, vesti i tutorijale o menadžmentu rasporeda časova na Rasporedaru. Saznajte kako da olakšate organizaciju!',
-    title: 'Blog | Rasporedar',
+    title: `Blog | ${process.env.NEXT_PUBLIC_APP_NAME}`,
   }
 
   const seoToMap = {

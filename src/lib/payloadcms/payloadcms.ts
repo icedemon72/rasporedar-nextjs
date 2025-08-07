@@ -2,10 +2,10 @@ import { IBlog, ISiteSettings, PayloadFetchOptions, PayloadPage, PayloadQueryPar
 import { headers} from 'next/headers';
 import { buildPayloadURL } from './buildPayloadUrl';
 
-const baseUrl = process.env.PAYLOAD_CMS_URL;
+const baseUrl = process.env.NEXT_PUBLIC_PAYLOAD_CMS_URL;
 const apiKey = process.env.PAYLOAD_CMS_KEY;
 
-if (!baseUrl) throw new Error('PAYLOAD_CMS_URL environment variable is not defined');
+if (!baseUrl) throw new Error('NEXT_PUBLIC_PAYLOAD_CMS_URL environment variable is not defined');
 if (!apiKey) throw new Error('PAYLOAD_CMS_KEY environment variable is not defined');
 
 const defaultFetchOptions: PayloadFetchOptions = {
