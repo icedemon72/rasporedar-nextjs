@@ -1,5 +1,7 @@
+import ProfessorDeleteButton from "@/components/client/professors/ProfessorDeleteButton";
 import EditButton from "@/components/ui/buttons/EditButton";
 import ViewButton from "@/components/ui/buttons/ViewButton";
+import SearchInput from "@/components/ui/SearchInput";
 import Table from "@/components/ui/table/Table";
 import TableCell from "@/components/ui/table/TableCell";
 import TableRow from "@/components/ui/table/TableRow";
@@ -21,8 +23,9 @@ export async function generateMetadata({ params }: PageProps) {
   }
 }
 
-export default async function ProfessorsPage({ params }: PageProps) {
+export default async function ProfessorsPage({ params, searchParams }: PageProps) {
   const { institution } = await params;
+  const { search } = await searchParams;
 
   const [ 
     institutionData,
@@ -33,6 +36,12 @@ export default async function ProfessorsPage({ params }: PageProps) {
     getInstitutionProfessors(institution),
     getRoleInInstitution(institution)
   ]);
+
+   const professorsData = search
+    ? professors.filter(p =>
+        `${p.title} ${p.name}`.toLowerCase().includes(search.toLowerCase())
+      )
+    : professors;
 
   return (
     <PageWrapper
@@ -47,7 +56,7 @@ export default async function ProfessorsPage({ params }: PageProps) {
       }}
     >
        <div className="flex flex-1 justify-between">
-        <input />
+        <SearchInput placeholder="Pretraži profesore..." /> 
         {
           includesRole(role, ['Owner', 'Moderator']) && (
             <Link href={`/app/institutions/${institution}/professors/create`} className="w-full md:w-auto btn-primary px-8">
@@ -67,7 +76,7 @@ export default async function ProfessorsPage({ params }: PageProps) {
         </TableRow>
         <tbody>
           {
-            professors.map((professor, index) => (
+            professorsData.map((professor, index) => (
               <TableRow key={professor._id}>
                 <TableCell>{ index + 1}</TableCell>
                 <TableCell>
@@ -80,7 +89,10 @@ export default async function ProfessorsPage({ params }: PageProps) {
                     <ViewButton link={`/app/institutions/${institution}/professors/${professor._id}`} />
                     {
                       includesRole(role, ['Owner', 'Moderator']) && (
-                        <EditButton link={`/app/institutions/${institution}/professors/${professor._id}/edit`} />
+                        <>
+                          <EditButton link={`/app/institutions/${institution}/professors/${professor._id}/edit`} />
+                          <ProfessorDeleteButton professor={professor} />
+                        </>
                       )
                     }
                   </div>

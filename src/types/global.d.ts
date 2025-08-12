@@ -11,3 +11,8 @@ export interface BreadcrumbLink {
 }
 
 export type InstitutionRole = 'Owner' | 'Moderator' | 'User';
+
+export type ModalState = { 
+  key: null | string; 
+  props?: any
+};

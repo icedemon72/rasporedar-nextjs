@@ -1,5 +1,7 @@
+import SubjectDeleteButton from "@/components/client/subjects/SubjectDeleteButton";
 import EditButton from "@/components/ui/buttons/EditButton";
 import ViewButton from "@/components/ui/buttons/ViewButton";
+import SearchInput from "@/components/ui/SearchInput";
 import Table from "@/components/ui/table/Table";
 import TableCell from "@/components/ui/table/TableCell";
 import TableRow from "@/components/ui/table/TableRow";
@@ -21,8 +23,9 @@ export async function generateMetadata({ params }: PageProps) {
   }
 }
 
-export default async function SubjectsPage({ params }: PageProps) {
+export default async function SubjectsPage({ params, searchParams }: PageProps) {
   const { institution } = await params;
+  const { search } = await searchParams;
 
   const [
     subjects,
@@ -33,6 +36,10 @@ export default async function SubjectsPage({ params }: PageProps) {
     getInstitution(institution),
     getRoleInInstitution(institution)
   ]);
+
+  const subjectsData = search
+    ? subjects.filter(p => p.name.toLowerCase().includes(search.toLowerCase()))
+    : subjects;
 
   return (
    <PageWrapper
@@ -48,7 +55,7 @@ export default async function SubjectsPage({ params }: PageProps) {
       }}
     >
       <div className="flex flex-1 justify-between">
-        <input />
+        <SearchInput placeholder="Pretraži predmete..." />
         {
           includesRole(role, ['Owner', 'Moderator']) && (
             <Link href={`/app/institutions/${institution}/subjects/create`} className="w-full md:w-auto btn-primary px-8">
@@ -68,7 +75,7 @@ export default async function SubjectsPage({ params }: PageProps) {
         </TableRow>
         <tbody>
           {
-            subjects.map((subject, index) => (
+            subjectsData.map((subject, index) => (
               <TableRow key={subject._id}>
                 <TableCell>{ index + 1}</TableCell>
                 <TableCell>
@@ -81,7 +88,10 @@ export default async function SubjectsPage({ params }: PageProps) {
                     <ViewButton link={`/app/institutions/${institution}/subjects/${subject._id}`} />
                      {
                         includesRole(role, ['Owner', 'Moderator']) && (
-                          <EditButton link={`/app/institutions/${institution}/subjects/${subject._id}/edit`} />
+                          <>
+                            <EditButton link={`/app/institutions/${institution}/subjects/${subject._id}/edit`} />
+                            <SubjectDeleteButton subject={subject} />
+                          </>
                         )
                       }
                   </div>

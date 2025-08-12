@@ -60,6 +60,15 @@ export class ApiClient {
     return data;
   }
 
+  async deleteProfessor(institution: string, professorId: string): Promise<{}> {
+    const response = await fetchWithAuthClient(`/api/institutions/${institution}/professors/${professorId}`, {
+      method: 'DELETE',
+    }, true);
+
+    const data = await response.json();
+    return data;
+  }
+
   async addSubject(institution: string, body: Omit<Subject, '_id' | 'institution'>): Promise<BasicCreateResponse> {
     const response = await fetchWithAuthClient(`/api/institutions/${institution}/subjects`, {
       method: 'POST',
@@ -77,6 +86,15 @@ export class ApiClient {
     }, true);
 
     const data: BasicCreateResponse = await response.json();
+    return data;
+  }
+
+  async deleteSubject(institution: string, subjectId: string) {
+    const response = await fetchWithAuthClient(`/api/institutions/${institution}/subjects/${subjectId}`, {
+      method: 'DELETE'
+    }, true);
+
+    const data = await response.json();
     return data;
   }
 

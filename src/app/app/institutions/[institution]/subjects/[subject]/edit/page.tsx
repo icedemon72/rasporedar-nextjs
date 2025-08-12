@@ -1,7 +1,8 @@
 import EditSubjectForm from "@/components/client/subjects/edit/EditSubjectForm";
+import SubjectDeleteEditButton from "@/components/client/subjects/edit/SubjectDeleteEditButton";
 import PageWrapper from "@/components/wrappers/PageWrapper";
-import { guardRoleInInstitution } from "@/lib/auth/role-guard";
-import { getInstitution, getInstitutionProfessors, getSubject } from "@/lib/fetch/server";
+import { guardRoleInInstitution, includesRole } from "@/lib/auth/role-guard";
+import { getInstitution, getInstitutionProfessors, getRoleInInstitution, getSubject } from "@/lib/fetch/server";
 import { Institution, Subject } from "@/types/data";
 import { PageProps } from "@/types/page";
 
@@ -31,11 +32,13 @@ export default async function SubjectEditPage({ params }: PageProps) {
   const [
     subjectRes,
     professors,
-    institutionRes
+    institutionRes,
+    role
   ] = await Promise.all([
     getSubject(institution, subject),
     getInstitutionProfessors(institution),
-    getInstitution(institution)
+    getInstitution(institution),
+    getRoleInInstitution(institution)
   ]);
 
   return (
@@ -52,6 +55,13 @@ export default async function SubjectEditPage({ params }: PageProps) {
         ]
       }}
     >
+      {
+        includesRole(role, ['Owner', 'Moderator']) && (
+          <div className="flex justify-end">
+            <SubjectDeleteEditButton subject={subjectRes} />
+          </div>
+        )
+      }
       <EditSubjectForm professors={professors} subject={subjectRes} />
     </PageWrapper>
   );

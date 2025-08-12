@@ -53,7 +53,7 @@ export default async function SubjectPage({ params }: PageProps) {
       {
         includesRole(role, ['Owner', 'Moderator']) && (
           <div className="flex justify-end">
-            <Link href={`/app/institutions/${institution}/professors/${subjectRes._id}/edit`} className="w-full md:w-auto btn-primary px-8">
+            <Link href={`/app/institutions/${institution}/subjects/${subjectRes._id}/edit`} className="w-full md:w-auto btn-primary px-8">
               <Edit />
               Uredi predmet
             </Link>

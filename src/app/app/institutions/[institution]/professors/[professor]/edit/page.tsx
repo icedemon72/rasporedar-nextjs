@@ -1,7 +1,8 @@
 import EditProfessorForm from "@/components/client/professors/edit/EditProfessorForm";
+import ProfessorDeleteEditButton from "@/components/client/professors/edit/ProfessorDeleteEditButton";
 import PageWrapper from "@/components/wrappers/PageWrapper";
 import { guardRoleInInstitution, includesRole } from "@/lib/auth/role-guard";
-import { getInstitution, getProfessor } from "@/lib/fetch/server";
+import { getInstitution, getProfessor, getRoleInInstitution } from "@/lib/fetch/server";
 import { PageProps } from "@/types/page";
 import { generateFullProfessorName } from "@/utils/professors";
 
@@ -31,14 +32,15 @@ export default async function ProfessorsEditPage({ params }: PageProps) {
 
   const [
     professorRes,
-    institutionRes
+    institutionRes,
+    role
   ] = await Promise.all([
     getProfessor(institution, professor),
-    getInstitution(institution)
+    getInstitution(institution),
+    getRoleInInstitution(institution)
   ]);
   
   const professorName = generateFullProfessorName({ name: professorRes.name, title: professorRes.title })
-
 
   return (
      <PageWrapper 
@@ -54,7 +56,15 @@ export default async function ProfessorsEditPage({ params }: PageProps) {
         ]
       }}
     >
+      {
+        includesRole(role, ['Owner', 'Moderator']) && (
+          <div className="flex justify-end">
+            <ProfessorDeleteEditButton professor={professorRes} />
+          </div>
+        )
+      }
       <EditProfessorForm professorData={professorRes} />
+
     </PageWrapper>
   );
 }

@@ -49,7 +49,6 @@ export default async function RootLayout({
                     </main>
                   </div>
                 </div>
-
                 <ToastContainer />
               </SiteSettingsProvider>
             </ApiProvider>
