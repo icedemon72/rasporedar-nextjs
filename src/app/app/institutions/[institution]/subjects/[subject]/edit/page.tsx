@@ -1,9 +1,14 @@
-import { getInstitution, getSubject } from "@/lib/fetch/server";
+import EditSubjectForm from "@/components/client/subjects/edit/EditSubjectForm";
+import PageWrapper from "@/components/wrappers/PageWrapper";
+import { guardRoleInInstitution } from "@/lib/auth/role-guard";
+import { getInstitution, getInstitutionProfessors, getSubject } from "@/lib/fetch/server";
 import { Institution, Subject } from "@/types/data";
 import { PageProps } from "@/types/page";
 
 export async function generateMetadata({ params }: PageProps) {
   const { institution, subject } = await params;
+
+  await guardRoleInInstitution(institution, ['Owner', 'Moderator']);
 
   const [
     institutionRes,
@@ -21,9 +26,33 @@ export async function generateMetadata({ params }: PageProps) {
 export default async function SubjectEditPage({ params }: PageProps) {
   const { institution, subject } = await params;
 
-  const subjectRes = await getSubject(institution, subject);
+  await guardRoleInInstitution(institution, ['Owner', 'Moderator']);
+
+  const [
+    subjectRes,
+    professors,
+    institutionRes
+  ] = await Promise.all([
+    getSubject(institution, subject),
+    getInstitutionProfessors(institution),
+    getInstitution(institution)
+  ]);
 
   return (
-    <>{ subjectRes.name }</>
+    <PageWrapper
+      title={`Uredi predmet '${subjectRes.name}'`}
+      breadcrumbs={{
+        links: [
+          { label: 'Panel', url: '/app' },
+          { label: 'Moje grupe', url: '/app/institutions'  },
+          { label: institutionRes.name, url: `/app/institutions/${institution}` },
+          { label: 'Predmeti', url: `/app/institutions/${institution}/subjects` },
+          { label: subjectRes.name,  url: `/app/institutions/${institution}/subjects/${subjectRes._id}` },
+          { label: 'Uredi' },
+        ]
+      }}
+    >
+      <EditSubjectForm professors={professors} subject={subjectRes} />
+    </PageWrapper>
   );
 }

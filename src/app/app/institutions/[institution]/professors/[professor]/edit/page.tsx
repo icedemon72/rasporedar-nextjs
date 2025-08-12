@@ -1,8 +1,14 @@
+import EditProfessorForm from "@/components/client/professors/edit/EditProfessorForm";
+import PageWrapper from "@/components/wrappers/PageWrapper";
+import { guardRoleInInstitution, includesRole } from "@/lib/auth/role-guard";
 import { getInstitution, getProfessor } from "@/lib/fetch/server";
 import { PageProps } from "@/types/page";
+import { generateFullProfessorName } from "@/utils/professors";
 
 export async function generateMetadata({ params }: PageProps) {
   const { institution, professor } = await params;
+
+  await guardRoleInInstitution(institution, ['Owner', 'Moderator']);
 
   const [
     institutionRes,
@@ -20,8 +26,35 @@ export async function generateMetadata({ params }: PageProps) {
 
 export default async function ProfessorsEditPage({ params }: PageProps) {
   const { institution, professor } = await params;
-  const professorRes = await getProfessor(institution, professor);
+
+  await guardRoleInInstitution(institution, ['Owner', 'Moderator']);
+
+  const [
+    professorRes,
+    institutionRes
+  ] = await Promise.all([
+    getProfessor(institution, professor),
+    getInstitution(institution)
+  ]);
+  
+  const professorName = generateFullProfessorName({ name: professorRes.name, title: professorRes.title })
+
+
   return (
-    <>{ professorRes.name } EDIT</>
+     <PageWrapper 
+      title={`Uredi profesora '${professorName}'`}
+      breadcrumbs={{
+        links: [
+          { label: 'Panel', url: '/app' },
+          { label: 'Moje grupe', url: '/app/institutions'  },
+          { label: institutionRes.name, url: `/app/institutions/${institution}` },
+          { label: 'Profesori', url: `/app/institutions/${institution}/professors` },
+          { label: professorName, url: `/app/institutions/${institution}/professors/${professorRes._id}` },
+          { label: 'Uredi' }
+        ]
+      }}
+    >
+      <EditProfessorForm professorData={professorRes} />
+    </PageWrapper>
   );
 }

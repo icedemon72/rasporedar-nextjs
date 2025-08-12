@@ -1,5 +1,7 @@
 import { Institution, Professor, ProfessorsSubjects, Schedule, Subject } from "@/types/data";
 import { fetchWithAuthServer } from "../auth/auth-server"
+import { cookies } from "next/headers";
+import { InstitutionRole } from "@/types/global";
 
 const defaultNextOptions = {
   revalidate: 3600,
@@ -21,9 +23,14 @@ export const getInstitution = async (id: string, options: RequestInit = {}): Pro
 }
 
 export const getUserInstitutions = async (options: RequestInit = { next: { revalidate: 0 } }): Promise<Institution[]> => {
+  const cookieStore = await cookies();
+
+  const refreshToken = cookieStore.get('refresh_token');
+
   const next = {
     ...defaultNextOptions,
-    ...options.next
+    ...options.next,
+    tags: [`institutions`, `institutions-${refreshToken}`]
   }
 
   const response = await fetchWithAuthServer(`/user_institutions/`, {
@@ -32,6 +39,24 @@ export const getUserInstitutions = async (options: RequestInit = { next: { reval
 
   const data: Institution[] = await response.json();
   return data;
+}
+
+export const getRoleInInstitution = async (id: string, options: RequestInit = {}): Promise<InstitutionRole>  => {
+  const cookieStore = await cookies();
+
+  const refreshToken = cookieStore.get('refresh_token');
+  const next = {
+    ...defaultNextOptions,
+    ...options.next,
+    tags: ['institutions', `institution-${id}`, `institution-${id}-role-${refreshToken}`]
+  }
+
+  const response = await fetchWithAuthServer(`/institutions/${id}/role`, {
+    next
+  });
+
+  const data: { role: InstitutionRole } = await response.json();
+  return data.role;
 }
 
 export const getInstitutionSubjects = async (id: string, options: RequestInit = {}): Promise<Subject[]> => {

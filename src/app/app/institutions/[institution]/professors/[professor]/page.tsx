@@ -3,10 +3,12 @@ import FilledInput from "@/components/ui/FilledInput";
 import ProfessorEducationField from "@/components/ui/institutions/professors/ProfessorEducationField";
 import { SubjectFields } from "@/components/ui/institutions/professors/SubjectFields";
 import PageWrapper from "@/components/wrappers/PageWrapper";
-import { getInstitution, getProfessor, getProfessorSubjects } from "@/lib/fetch/server";
+import { includesRole } from "@/lib/auth/role-guard";
+import { getInstitution, getProfessor, getProfessorSubjects, getRoleInInstitution } from "@/lib/fetch/server";
 import { PageProps } from "@/types/page";
 import { generateFullProfessorName } from "@/utils/professors";
-import { Plus } from "lucide-react";
+import { Edit, Plus } from "lucide-react";
+import Link from "next/link";
 
 export async function generateMetadata({ params }: PageProps) {
   const { institution, professor } = await params;
@@ -33,11 +35,13 @@ export default async function ProfessorsSlugPage({ params }: PageProps) {
   const [
     professorRes,
     institutionRes,
-    subjects
+    subjects,
+    role
   ] = await Promise.all([
     getProfessor(institution, professor),
     getInstitution(institution),
-    getProfessorSubjects(institution, professor)
+    getProfessorSubjects(institution, professor),
+    getRoleInInstitution(institution)
   ]);
 
   const professorName = generateFullProfessorName({ name: professorRes.name, title: professorRes.title })
@@ -55,6 +59,16 @@ export default async function ProfessorsSlugPage({ params }: PageProps) {
         ]
       }}
     >
+      {
+        includesRole(role, ['Owner', 'Moderator']) && (
+          <div className="flex justify-end">
+            <Link href={`/app/institutions/${institution}/professors/${professorRes._id}/edit`} className="w-full md:w-auto btn-primary px-8">
+              <Edit />
+              Uredi profesora
+            </Link>
+          </div>
+        )
+      }
       <CollapsibleField label="Stručna biografija" data={professorRes.bio} />
       <ProfessorEducationField label="Osnovne studije" value={professorRes.education?.bachelor} />
       <ProfessorEducationField label="Master studije" value={professorRes.education?.master} />

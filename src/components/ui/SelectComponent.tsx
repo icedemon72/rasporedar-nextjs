@@ -52,18 +52,18 @@ const SelectComponent: React.FC<SelectComponentProps> = ({
     control: (baseStyles) => ({
       ...baseStyles,
       backgroundColor: theme === 'dark' ? 'rgb(31, 41, 55)' : 'white',
-      borderColor: '#6a7282',
+      borderColor: '#e5e7eb',
       borderWidth: 1,
       borderRadius: 6,
       zIndex: 1,
       "&:hover": {
-        borderColor: "#6a7282",
+        borderColor: "#e5e7eb",
       },
       '&:focus': {
-        borderColor: "#6a7282",
+        borderColor: "e5e7eb",
       },
       '&:active': {
-        borderColor: "#6a7282",
+        borderColor: "e5e7eb",
       },
     }),
     menu: base => ({
@@ -77,7 +77,7 @@ const SelectComponent: React.FC<SelectComponentProps> = ({
       ...base,
       backgroundColor: main,
       borderWidth: 1,
-      borderColor: '#6a7282',
+      borderColor: 'e5e7eb',
       borderRadius: 6,
     }),
     option: (styles, { isDisabled }) => ({
@@ -96,7 +96,8 @@ const SelectComponent: React.FC<SelectComponentProps> = ({
       backgroundColor: main,
       color: WnB,
       borderWidth: 1,
-      borderColor: '#6a7282',
+      borderColor: 'black',
+      borderRadius: 4,
     }),
     multiValueLabel: (base) => ({
       ...base,

@@ -1,9 +1,12 @@
 import CollapsibleField from "@/components/ui/CollapsibleField";
 import { ProfessorFields } from "@/components/ui/institutions/subjects/ProfessorFields";
 import PageWrapper from "@/components/wrappers/PageWrapper";
-import { getInstitution, getSubject } from "@/lib/fetch/server";
+import { includesRole } from "@/lib/auth/role-guard";
+import { getInstitution, getRoleInInstitution, getSubject } from "@/lib/fetch/server";
 import { Institution, Professor, Subject } from "@/types/data";
 import { PageProps } from "@/types/page";
+import { Edit } from "lucide-react";
+import Link from "next/link";
 
 export async function generateMetadata({ params }: PageProps) {
   const { institution, subject } = await params;
@@ -26,13 +29,13 @@ export default async function SubjectPage({ params }: PageProps) {
 
   const [
     subjectRes,
-    institutionRes
+    institutionRes,
+    role
   ] = await Promise.all([
     getSubject(institution, subject, { fullInfo: true }),
-    getInstitution(institution)
+    getInstitution(institution),
+    getRoleInInstitution(institution)
   ]);
-
-  console.log(subjectRes);
 
   return (
     <PageWrapper
@@ -47,6 +50,16 @@ export default async function SubjectPage({ params }: PageProps) {
         ]
       }}
     >
+      {
+        includesRole(role, ['Owner', 'Moderator']) && (
+          <div className="flex justify-end">
+            <Link href={`/app/institutions/${institution}/professors/${subjectRes._id}/edit`} className="w-full md:w-auto btn-primary px-8">
+              <Edit />
+              Uredi predmet
+            </Link>
+          </div>
+        )
+      }
       <CollapsibleField label="Opis predmeta" data={subjectRes.description} />
       <CollapsibleField label="Cilj predmeta" data={subjectRes.goal} />
       <CollapsibleField label="Rezultat predmeta" data={subjectRes.result} />

@@ -1,3 +1,4 @@
+import RegisterClient from "@/components/client/register/RegisterClient";
 import { SEOMapper } from "@/lib/seo/seoMapper";
 import { SEO } from "@/types/page";
 
@@ -16,5 +17,5 @@ export async function generateMetadata() {
 }
 
 export default async function RegisterPage() {
-  return( <>Register</>);
+  return <RegisterClient />;
 }

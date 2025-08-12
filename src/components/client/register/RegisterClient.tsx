@@ -10,17 +10,9 @@ import { useAuth } from '@/context/auth-context';
 import { login } from "@/lib/auth/auth-client" // Updated import
 import { useApi } from '@/context/api-context';
 
-interface LoginClientProps {
-  redirectTo: string ;
-}
-
-const LoginClient: React.FC<LoginClientProps> = ({
-  redirectTo = '/app'
-}) => {
+const RegisterClient = () => {
   const { api, client } = useApi();
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const { setUser } = useAuth();
 
   const [ name, setName ] = useState<string>('');
   const [ email, setEmail ] = useState<string>('');
@@ -28,8 +20,24 @@ const LoginClient: React.FC<LoginClientProps> = ({
   const [ password, setPassword ] = useState<string>('');
   
 
-  const handleRegister = async () => {
-    // const res = await api(() => client.register())
+  const handleRegister = async (e: React.FormEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const body = {
+      name, email, username, password
+    }
+    const res = await api(
+      () => client.register(body),
+      {
+        onSuccess(data) {
+          router.push('/auth/login');
+        },
+        onError(error) {
+          console.error(error);
+        }
+      }
+    );
   }
   
 
@@ -37,18 +45,27 @@ const LoginClient: React.FC<LoginClientProps> = ({
     <>
       <CardContainer containerBgClass='bg-day dark:bg-night bg-cover'>
         <h1 className="text-xl font-bold py-5 text-center">Registracija</h1>
-        <form onSubmit={handleRegister}>
-          <div className="mb-2">
+        <form onSubmit={handleRegister} className="space-y-2">
+          <div>
             <Input 
               id="username" 
               type="text" 
-              name="Korisničko ime ili e-adresa"
+              name="Korisničko ime"
               placeholder="marko.markovic"
               setVal={setUsername}
               inputVal={username}
             />
+             <span className="text-xs text-muted">* Korisničko ime ne sme sadržati razmak</span>
           </div>
-          <div className="mb-2">
+          <Input 
+            id="emaik" 
+            type="email" 
+            name="E-adresa"
+            placeholder="marko.markovic@primer.com"
+            setVal={setEmail}
+            inputVal={email}
+          />
+          <div>
             <Input
               id="password"
               type="password"
@@ -57,15 +74,24 @@ const LoginClient: React.FC<LoginClientProps> = ({
               setVal={setPassword}
               inputVal={password}
             />
+            <span className="text-xs text-muted">* Lozinka mora sadržati bar 3 karaktera</span>
           </div>
+          <Input
+            id="name"
+            type="text"
+            name="Ime i prezime"
+            placeholder="Marko Marković"
+            setVal={setName}
+            inputVal={name}
+          />
           <div className='w-full flex justify-center my-3'>
-            <button className="w-full btn-primary btn-green">Prijavi se!</button>
+            <button className="w-full btn-primary btn-green">Registruj se!</button>
           </div>
-          <p className="block text-sm">Nemaš nalog? <Link className="underline hover:no-underline cursor-pointer" href="/auth/register">Registruj se!</Link></p>
+          <p className="block text-sm">Imaš nalog? <Link className="underline hover:no-underline cursor-pointer" href="/auth/login">Prijavi se!</Link></p>
         </form>
       </CardContainer>
     </>
   )
 }
 
-export default LoginClient;
+export default RegisterClient;

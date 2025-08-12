@@ -1,17 +1,15 @@
-import { InstitutionCreateBody, LoginResponse, RegisterUserBody } from "@/types/fetch"
+import { BasicCreateResponse, InstitutionCreateBody, LoginResponse, RegisterUserBody } from "@/types/fetch"
 import { fetchWithAuthClient } from "../auth/auth"
-import { Institution } from "@/types/data";
-
-
+import { Institution, Professor, Subject } from "@/types/data";
 
 export class ApiClient {
   protected API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
-  static async createInstitution(body: InstitutionCreateBody) {
-    const response = await fetchWithAuthClient('/institutions', {
+  async createInstitution(body: InstitutionCreateBody) {
+    const response = await fetchWithAuthClient('/api/institutions', {
       method: 'POST',
       body: JSON.stringify(body)
-    });
+    }, true);
     
     const data: Institution = await response.json();
     return data;
@@ -39,6 +37,60 @@ export class ApiClient {
       throw new Error(data.message || 'Login failed');
     }
   
+    return data;
+  }
+
+  async addProfessor(institution: string, body: Omit<Professor, '_id' | 'institution'>): Promise<BasicCreateResponse> {
+    const response = await fetchWithAuthClient(`/api/institutions/${institution}/professors`, {
+      method: 'POST',
+      body: JSON.stringify(body)
+    }, true);
+
+    const data: BasicCreateResponse = await response.json();
+    return data;
+  }
+
+  async editProfessor(institution: string, professorId: string, body: Omit<Professor, '_id'>): Promise<BasicCreateResponse> {
+    const response = await fetchWithAuthClient(`/api/institutions/${institution}/professors/${professorId}`, {
+      method: 'PATCH',
+      body: JSON.stringify(body)
+    }, true);
+
+    const data: BasicCreateResponse = await response.json();
+    return data;
+  }
+
+  async addSubject(institution: string, body: Omit<Subject, '_id' | 'institution'>): Promise<BasicCreateResponse> {
+    const response = await fetchWithAuthClient(`/api/institutions/${institution}/subjects`, {
+      method: 'POST',
+      body: JSON.stringify(body)
+    }, true);
+
+    const data: BasicCreateResponse = await response.json();
+    return data;
+  }
+
+  async editSubject(institution: string, subjectId: string, body: Omit<Subject, '_id'>): Promise<BasicCreateResponse> {
+    const response = await fetchWithAuthClient(`/api/institutions/${institution}/subjects/${subjectId}`, {
+      method: 'PATCH',
+      body: JSON.stringify(body)
+    }, true);
+
+    const data: BasicCreateResponse = await response.json();
+    return data;
+  }
+
+  async joinInstitution(code: string, role: 'moderator' | 'user' = 'user'):  Promise<BasicCreateResponse> {
+    const url = role === 'moderator'
+      ? `/api/institutions/join_moderator` 
+      : `/api/institutions/join`
+    
+    const response = await fetchWithAuthClient(url, {
+      method: 'POST',
+      body: JSON.stringify({ code, role })
+    }, true);
+
+    const data: BasicCreateResponse = await response.json();
     return data;
   }
 }

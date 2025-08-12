@@ -1,71 +1,62 @@
+// components/forms/CreateSubjectForm.tsx
 'use client';
 
-import Input from '@/components/ui/Input';
-import Textarea from '@/components/ui/Textarea';
-import { Subject } from '@/types/data';
-import React, { useCallback, useState } from 'react';
+import { useApi } from '@/context/api-context';
+import { Professor } from '@/types/data';
+import { OptionType } from '@/types/global';
+import { useRouter } from 'next/navigation';
+import { toast } from 'react-toastify';
+import SubjectFormBase from '../SubjectFormBase';
 
-const CreateSubjectForm = () => {
-  const [ formData, setFormData ] = useState<Omit<Subject, '_id' | 'institution'>>({
-    assistents: [],
-    description: '',
-    goal: '',
-    name: '',
-    professors: [],
-    // references: [],
-    result: '',
-  });
+interface CreateSubjectFormProps {
+  professors: Professor[];
+  institution: string;
+}
 
-  const handleChange = useCallback(
-    <K extends keyof typeof formData>(field: K) => (value: typeof formData[K]) => {
-      setFormData(prev => ({ ...prev, [field]: value }));
-    },
-    []
-  );
+const CreateSubjectForm: React.FC<CreateSubjectFormProps> = ({ professors, institution }) => {
+  const { api, client } = useApi();
+  const router = useRouter();
 
-  const handleSubmit = (e: any) => {
-    e.preventDefault();
-    e.stopPropagation();
+  const handleSubmit = async (formData: {
+    name: string;
+    description: string;
+    goal: string;
+    result: string;
+    professors: OptionType[];
+    assistents: OptionType[];
+  }) => {
+    const payload = {
+      ...formData,
+      professors: formData.professors.map((p) => p.value) as string[],
+      assistents: formData.assistents.map((a) => a.value) as string[],
+    };
 
-    console.log(formData);
-  }
+    await api(() => client.addSubject(institution, payload), {
+      onSuccess(data) {
+        toast.success('Predmet je uspešno kreiran.');
+        router.push(`/app/institutions/${institution}/subjects/${data._id}`);
+      },
+      onError(error) {
+        toast.error('Greška prilikom pravljenja predmeta. ' + error?.message);
+        console.error('Error:', error);
+      }
+    });
+  };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-2">
-      <Input 
-        id="name"
-        name="Naziv predmeta"
-        placeholder="Cloud computing"
-        inputVal={formData.name}
-        setVal={handleChange('name')}
-        type="text"
-      />
-
-      <Textarea 
-        id="description" 
-        name='Opis predmeta' 
-        placeholder='Unesite opis predmeta...'
-        inputVal={formData.description}
-        setVal={handleChange('description')}
-      />
-
-      <Textarea 
-        id="goal" 
-        name='Cilj predmeta' 
-        placeholder='Unesite cilj predmeta...'
-        inputVal={formData.goal}
-        setVal={handleChange('goal')}
-      />
-
-      <Textarea 
-        id="result" 
-        name='Rezultat predmeta' 
-        placeholder='Unesite rezultat predmeta...'
-        inputVal={formData.result}
-        setVal={handleChange('result')}
-      />
-    </form>
+    <SubjectFormBase
+      professors={professors}
+      initialData={{
+        name: '',
+        description: '',
+        goal: '',
+        result: '',
+        professors: [],
+        assistents: [],
+      }}
+      onSubmit={handleSubmit}
+    />
   );
-}
+};
 
 export default CreateSubjectForm;

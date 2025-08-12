@@ -1,6 +1,6 @@
 export interface OptionType {
   label: string;
-  value: string | number;
+  value: any;
   [key: string]: any;
 }
 
@@ -9,3 +9,5 @@ export interface BreadcrumbLink {
   url?: string;
   active?: boolean;
 }
+
+export type InstitutionRole = 'Owner' | 'Moderator' | 'User';

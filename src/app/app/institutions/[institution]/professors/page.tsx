@@ -4,7 +4,9 @@ import Table from "@/components/ui/table/Table";
 import TableCell from "@/components/ui/table/TableCell";
 import TableRow from "@/components/ui/table/TableRow";
 import PageWrapper from "@/components/wrappers/PageWrapper";
-import { getInstitution, getInstitutionProfessors } from "@/lib/fetch/server";
+import { getCurrentUserServer } from "@/lib/auth/auth-server";
+import { includesRole } from "@/lib/auth/role-guard";
+import { getInstitution, getInstitutionProfessors, getRoleInInstitution } from "@/lib/fetch/server";
 import { PageProps } from "@/types/page";
 import { Plus } from "lucide-react";
 import Link from "next/link";
@@ -24,10 +26,12 @@ export default async function ProfessorsPage({ params }: PageProps) {
 
   const [ 
     institutionData,
-    professors
+    professors,
+    role
   ] = await Promise.all([
     getInstitution(institution),
-    getInstitutionProfessors(institution)
+    getInstitutionProfessors(institution),
+    getRoleInInstitution(institution)
   ]);
 
   return (
@@ -44,10 +48,14 @@ export default async function ProfessorsPage({ params }: PageProps) {
     >
        <div className="flex flex-1 justify-between">
         <input />
-        <Link href={`/app/institutions/${institution}/professors/create`} className="w-full md:w-auto btn-primary px-8">
-          <Plus />
-          Dodaj profesora
-        </Link>
+        {
+          includesRole(role, ['Owner', 'Moderator']) && (
+            <Link href={`/app/institutions/${institution}/professors/create`} className="w-full md:w-auto btn-primary px-8">
+              <Plus />
+              Dodaj profesora
+            </Link>
+          )
+        }
       </div>
       <Table>
         <TableRow header>
@@ -70,7 +78,11 @@ export default async function ProfessorsPage({ params }: PageProps) {
                 <TableCell>
                   <div className="flex gap-2">
                     <ViewButton link={`/app/institutions/${institution}/professors/${professor._id}`} />
-                    <EditButton link={`/app/institutions/${institution}/professors/${professor._id}/edit`} />
+                    {
+                      includesRole(role, ['Owner', 'Moderator']) && (
+                        <EditButton link={`/app/institutions/${institution}/professors/${professor._id}/edit`} />
+                      )
+                    }
                   </div>
                 </TableCell>
               </TableRow>

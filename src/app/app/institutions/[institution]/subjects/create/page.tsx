@@ -1,10 +1,13 @@
 import CreateSubjectForm from "@/components/client/subjects/create/CreateSubjectForm";
 import PageWrapper from "@/components/wrappers/PageWrapper";
-import { getInstitution } from "@/lib/fetch/server";
+import { guardRoleInInstitution } from "@/lib/auth/role-guard";
+import { getInstitution, getInstitutionProfessors } from "@/lib/fetch/server";
 import { PageProps } from "@/types/page";
 
 export async function generateMetadata({ params }: PageProps) {
   const { institution } = await params;
+
+  await guardRoleInInstitution(institution, ['Owner', 'Moderator']);
 
   const institutionRes = await getInstitution(institution);
 
@@ -15,8 +18,17 @@ export async function generateMetadata({ params }: PageProps) {
 
 export default async function SubjectsCreatePage({ params }: PageProps) {
   const { institution } = await params;
+
+  await guardRoleInInstitution(institution, ['Owner', 'Moderator']);
   
-  const institutionData = await getInstitution(institution);
+  const [
+    institutionData,
+    professors
+  ] = await Promise.all([
+    getInstitution(institution),
+    getInstitutionProfessors(institution)
+  ])
+
   
   return (
     <PageWrapper
@@ -31,7 +43,7 @@ export default async function SubjectsCreatePage({ params }: PageProps) {
         ]
       }}
     >
-      <CreateSubjectForm />
+      <CreateSubjectForm professors={professors} institution={institution} />
     </PageWrapper>
   );
 }

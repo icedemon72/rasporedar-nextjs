@@ -2,9 +2,19 @@ import { LoginResponse, User } from "@/types/fetch"
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001"
 
+async function safeParseJSON(response: Response) {
+  try {
+    return await response.json();
+  } catch {
+    return null;
+  }
+}
+
 // Client-side fetch with authentication
-export async function fetchWithAuthClient(endpoint: string, options: RequestInit = {}): Promise<Response> {
-  const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+export async function fetchWithAuthClient(endpoint: string, options: RequestInit = {}, isApi: boolean = false): Promise<Response> {
+  const baseUrl = isApi ? '' : API_BASE_URL;
+  
+  const response = await fetch(`${baseUrl}${endpoint}`, {
     ...options,
     headers: {
       "Content-Type": "application/json",
@@ -36,6 +46,11 @@ export async function fetchWithAuthClient(endpoint: string, options: RequestInit
       window.location.href = "/login"
       throw new Error("Authentication failed")
     }
+  }
+
+  if (!response.ok) {
+    const errorData = await safeParseJSON(response);
+    throw new Error(errorData?.message || `Greška: ${response.status}`);
   }
 
   return response

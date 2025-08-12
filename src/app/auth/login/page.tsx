@@ -20,11 +20,6 @@ export async function generateMetadata() {
 
 export default async function LoginPage({ searchParams }: PageProps) {
   const { redirectTo } = await searchParams;
-
-  const user = await getCurrentUserServer();
-  if (user) {
-    redirect(redirectTo || '/app');
-  }
   
   return (
     <LoginClient redirectTo={redirectTo || '/app'} />

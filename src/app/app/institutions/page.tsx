@@ -1,13 +1,12 @@
 import InstitutionCard from "@/components/ui/institutions/InstitutionCard";
 import PageWrapper from "@/components/wrappers/PageWrapper";
-import { fetchWithAuthServer } from "@/lib/auth/auth-server";
+import { getUserInstitutions } from "@/lib/fetch/server";
 import { Institution } from "@/types/data";
 import Link from "next/link";
 
 export default async function InstitutionsPage() {
-  const res = await fetchWithAuthServer('/user_institutions')
-  const institutions: Institution[] = await res.json()
-  
+  const institutions = await getUserInstitutions();
+
   return (
     <PageWrapper
       title={'Moje grupe'}

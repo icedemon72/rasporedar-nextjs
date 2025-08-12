@@ -24,7 +24,9 @@ export interface AuthState {
 }
 
 export interface InstitutionCreateBody {
-  
+  name: string;
+  typeOf: string;
+  departments: string[]
 }
 
 export interface RegisterUserBody {
@@ -32,4 +34,9 @@ export interface RegisterUserBody {
   email: string;
   name: string;
   password: string;
+}
+
+export interface BasicCreateResponse {
+  message: string;
+  _id: string;
 }
