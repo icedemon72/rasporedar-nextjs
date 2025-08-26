@@ -1,5 +1,6 @@
-import { SerializedEditorState } from "@payloadcms/richtext-lexical/lexical";
+import { any } from "@payloadcms/richtext-lexical/lexical";
 import { SEO } from "./page";
+import { INavbar } from "./nav";
 
 export interface PayloadFetchOptions {
   next?: {
@@ -56,22 +57,26 @@ export interface PayloadPage extends PayloadResponseDefaults {
   layout: any[];
 }
 
+export interface PayloadMedia {
+  alt: string;
+  createdAt: string;
+  filename: string;
+  filesize: number;
+  focalX: number;
+  focalY: number;
+  height: number;
+  id: string;
+  mimeType: string;
+  thumbnailUrl: string | null;
+  updatedAt: string;
+  url: string;
+  width: number;
+}
+
 export interface ISiteSettings extends PayloadResponseDefaults {
   logo: string;
   title: string;
-  navigationBar: {
-    logo: string;
-    title: string;
-    links: {
-      label: string;
-      url?: string;
-      isDropdown: boolean;
-      links: {
-        label: string;
-        url: string;
-      }
-    }
-  }
+  navigationBar: INavbar;
 }
 
 interface BlogBase {
@@ -79,12 +84,96 @@ interface BlogBase {
   title: string;
   excerpt: string;  
   publishedDate: string;
+  featuredImage: PayloadMedia;
   status: 'published' | 'archived' | 'draft';
   tags: string[];
 }
 
 export interface IBlog extends PayloadResponseDefaults, BlogBase {
-  content: SerializedEditorState;
+  content: any;
   relatedBlogs: BlogBase[];
   seo: SEO;
 }
+
+export type Priority = "above" | "below";
+
+export interface CallToActionBlock {
+  blockType: "call-to-action";
+  priority: Priority;
+  title: string;
+  description?: string;
+  buttons?: {
+    label: string;
+    url: string;
+  }[];
+}
+
+export interface AccordionBlock {
+  blockType: "accordion";
+  priority: Priority;
+  items: {
+    question: string;
+    answer: any;
+  }[];
+}
+
+export interface FeatureListBlock {
+  blockType: "feature-list";
+  priority: Priority;
+  sectionTitle?: string;
+  features: {
+    icon?: PayloadMedia;
+    title: string;
+    description?: string;
+  }[];
+}
+
+export interface HeroBlock {
+  blockType: "hero";
+  priority: Priority;
+  backgroundImage: PayloadMedia;
+  title: string;
+  subtitle?: string;
+  buttons?: {
+    label: string;
+    url: string;
+  }[];
+  icon?: PayloadMedia;
+}
+
+export interface ImageTextBlock {
+  blockType: "image-text";
+  priority: Priority;
+  imagePosition: "left" | "right";
+  image: PayloadMedia;
+  title?: string;
+  content?: any;
+}
+
+export interface MediaGalleryBlock {
+  blockType: "media-gallery";
+  priority: Priority;
+  title?: string;
+  images: {
+    image: PayloadMedia;
+    caption?: string;
+  }[];
+}
+
+export interface TestimonialBlock {
+  blockType: "testimonial";
+  priority: Priority;
+  quote: string;
+  author: string;
+  role?: string;
+  avatar?: PayloadMedia;
+}
+
+export type PageBlock =
+  | CallToActionBlock
+  | AccordionBlock
+  | FeatureListBlock
+  | HeroBlock
+  | ImageTextBlock
+  | MediaGalleryBlock
+  | TestimonialBlock;

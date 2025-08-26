@@ -7,12 +7,6 @@ import { useRouter } from 'next/navigation';
 import ProfessorFormBase from '../ProfessorFormBase';
 import { toast } from 'react-toastify';
 
-const educationTemplate: ProfessorEducation = {
-  institution: '',
-  from: '',
-  to: ''
-}
-
 interface CreateProfessorFormProps {
   institution: string;
 }

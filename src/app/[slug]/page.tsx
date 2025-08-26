@@ -1,3 +1,4 @@
+import BlockWrapper from "@/components/wrappers/BlockWrapper";
 import { getPageBySlug } from "@/lib/payloadcms/payloadcms";
 import { SEOMapper } from "@/lib/seo/seoMapper";
 import { PageProps } from "@/types/page";
@@ -19,9 +20,17 @@ export default async function Page({ params }: PageProps) {
 
   const page = await getPageBySlug(slug);
 
+  console.log(page);
+
   if (!page) return notFound();
 
   return (
-    <>Dynamic Page - { slug }</>
+    <>
+      {
+        page.layout
+        .filter((b) => b.priority === "above")
+        .map((block, i) => <BlockWrapper key={i} {...block} />)
+      }
+    </>
   );
 }

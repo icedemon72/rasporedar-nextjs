@@ -56,6 +56,26 @@ export type Professor = {
   education: Record<ProfessorEducationType, ProfessorEducation>;
 }
 
+export type ScheduleInstanceDefaultTime = {
+  from: string;
+  to: string;
+}
+
+export type ScheduleInstanceData = {
+  subject: string;
+  lecturer: string;
+  from?: string;
+  to?: string;
+  location?: string;
+}
+
+export type ScheduleInstance = {
+  data: ScheduleInstanceData[][];
+  defaultTimes: ScheduleInstanceDefaultTime[];
+}
+
+export type ScheduleCreateOmit = '_id' | 'createdBy' | 'createdAt' | 'published' | 'archived' | 'updatedAt';
+
 export type Schedule = {
   _id: string;
   archived: boolean;
@@ -66,7 +86,7 @@ export type Schedule = {
   department: string;
   frequency: string;
   groups: string[];
-  instances: any[]; // TODO: change this
+  instances: ScheduleInstance[];
   institution: string;
   published: boolean;
   style: string;
@@ -77,3 +97,5 @@ export type Schedule = {
   validFrom: string;
   validUntil: string;
 }
+
+export type ExtendedSchedule = Partial<Schedule> & Partial<{ rows?: ScheduleInstance[] }>

@@ -4,13 +4,14 @@ interface TableCellProps {
   children: React.ReactNode;
   header?: boolean;
   className?: string;
+  props?: any;
 }
 
-const TableCell: React.FC<TableCellProps> = ({ children, header = false, className = '' }) => {
+const TableCell: React.FC<TableCellProps> = ({ children, header = false, className = '', props }) => {
   const Tag = header ? 'th' : 'td';
 
   return (
-    <Tag className={`px-4 py-2 ${header ? 'font-semibold text-sm td-text' : 'th-text'} ${className}`}>
+    <Tag className={`px-4 py-2 ${header ? 'font-semibold text-sm td-text' : 'th-text'} ${className}`} {...props}>
       {children}
     </Tag>
   );

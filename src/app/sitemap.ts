@@ -15,7 +15,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const pages = await getPages(100);
   const filteredPages = pages.docs.filter(doc => doc.slug !== 'home');
 
-  const blogs = await getBlogs(1000, {
+  const blogs = await getBlogs(1000, 1, {
     where: {
       status: {
         equals: 'published'

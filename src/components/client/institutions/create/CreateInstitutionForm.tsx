@@ -3,7 +3,6 @@
 import { useApi } from '@/context/api-context';
 import { OptionType } from '@/types/global';
 import { addItemToArrayOnKey, deleteItemFromArray } from '@/utils/update-array';
-import { ApiClient } from '@/lib/fetch/api-client';
 import React, { useRef, useState } from 'react';
 import { InstitutionCreateBody } from '@/types/fetch';
 import { useRouter } from 'next/navigation';
@@ -35,7 +34,7 @@ const CreateInstitutionForm = () => {
 
   const handleDepartments = (elem: any, key: string | null = 'Enter') => {
     const toAdd = addItemToArrayOnKey(departments, elem, key, true);
-    if(toAdd.changed) {
+    if (toAdd.changed) {
       setDepartments(toAdd.result);
       setDpt('');
     }
@@ -44,7 +43,7 @@ const CreateInstitutionForm = () => {
   const handleDeleteDepartment = (index: number) => {
     let tempDepartments = [ ...departments ]; 
     const toDelete = deleteItemFromArray(tempDepartments, index);
-    if(toDelete) {
+    if (toDelete) {
       setDepartments(toDelete);
     }
   }

@@ -7,7 +7,7 @@ import { ModalHost } from '@/components/ui/modals/ModalHost';
 import { useApi } from '@/context/api-context';
 import { useModal } from '@/hooks/use-modal';
 import { Professor } from '@/types/data';
-import { Trash } from 'lucide-react';
+import { Trash2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
 
@@ -44,7 +44,7 @@ const ProfessorDeleteEditButton: React.FC<ProfessorDeleteEditButtonProps> = ({
   return (
     <>
       <button className="w-full lg:w-auto btn-primary px-4 my-4" onClick={handleOpenDeleteModal}>
-        <Trash />
+        <Trash2 />
         Obriši profesora
       </button>
       <ModalHost 

@@ -7,7 +7,7 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   inputVal: string;
   setVal: (val: string) => void;
   name: string;
-  type: HTMLInputTypeAttribute;
+  type?: HTMLInputTypeAttribute;
 }
 
 const Input: React.FC<InputProps> = ({ 
@@ -15,7 +15,7 @@ const Input: React.FC<InputProps> = ({
 	inputVal, 
 	setVal, 
 	name,
-	type, 
+	type = 'text', 
 	disabled = false, 
 	required = true, 
 	...rest 

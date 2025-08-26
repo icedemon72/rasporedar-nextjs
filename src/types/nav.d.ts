@@ -10,4 +10,3 @@ export interface INavbar {
   title: string;
   links:  NavLink[];
 } 
-

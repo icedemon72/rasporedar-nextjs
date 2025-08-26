@@ -1,5 +1,7 @@
 import { getBlogs, getPageBySlug } from "@/lib/payloadcms/payloadcms";
 import { SEOMapper } from "@/lib/seo/seoMapper";
+import BlogList from "@/components/ui/blog/BlogList";
+import PageWrapper from "@/components/wrappers/PageWrapper";
 
 export async function generateMetadata() {
   const page = await getPageBySlug('blogs');
@@ -20,14 +22,27 @@ export async function generateMetadata() {
 }
 
 export default async function BlogsPage() {
-  const initialBlogs = await getBlogs(6, { 
+  const initialBlogsResponse = await getBlogs(9, 1, { 
     where: { 
       status: 'published'
     },
-    depth: 0
+    depth: 1
   });
 
+  const initialBlogs = initialBlogsResponse.docs;
+  const totalPages = initialBlogsResponse.totalPages;
+
   return (
-    <>Blogs Page</>
+    <PageWrapper 
+      title={'Blogovi'}
+      breadcrumbs={{
+        links: [
+          { label: 'Početna', url: '/' },
+          { label: 'Blogovi' }
+        ]
+      }}
+    >
+      <BlogList initialBlogs={initialBlogs} totalPages={totalPages} />
+    </PageWrapper>
   );
 }

@@ -30,8 +30,6 @@ const Sidebar: React.FC<SidebarProps> = ({
     router.replace('/auth/login');
   }
 
-  console.log(user);
-
   useEffect(() => {
     onClose();
   }, [ pathname ]);
@@ -86,6 +84,9 @@ const Sidebar: React.FC<SidebarProps> = ({
                 </li>
                 <li>
                   <NavItem link={{ label: 'Pridruži se', url: '/app/institutions/join' }} active={pathname === '/app/institutions/join'} />
+                </li>
+                <li>
+                   <NavItem link={{ label: 'Moj profil', url: '/app/profile' }} active={pathname === '/app/profile'} />
                 </li>
                 <li>
                   <button 

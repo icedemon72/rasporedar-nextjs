@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import { ISiteSettings } from "@/types/payload";
 import { createContext, useContext } from "react";

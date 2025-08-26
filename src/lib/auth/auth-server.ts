@@ -4,18 +4,32 @@ import type { User, LoginResponse } from '@/types/fetch';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001"
 
+function buildQueryString(params: Record<string, any> = {}): string {
+  const query = new URLSearchParams()
+
+  Object.entries(params).forEach(([key, value]) => {
+    if (value !== undefined && value !== null) {
+      query.append(key, String(value))
+    }
+  })
+
+  const queryString = query.toString()
+  return queryString ? `?${queryString}` : ''
+}
+
 // Server-side fetch with authentication
 export async function fetchWithAuthServer(
   endpoint: string,
-  options: RequestInit = {}
+  options: RequestInit = {},
+  queryParams: Record<string, any> = {}
 ): Promise<Response> {
   const cookieStore = await cookies()
   const cookieHeader = cookieStore.toString()
 
-  console.log(`${API_BASE_URL}${endpoint}`);
-  console.log(cookieHeader);
+  const queryString = buildQueryString(queryParams);
+  const url = `${API_BASE_URL}${endpoint}${queryString}`;
 
-  let response = await fetch(`${API_BASE_URL}${endpoint}`, {
+  let response = await fetch(url, {
     ...options,
     headers: {
       "Content-Type": "application/json",
@@ -24,8 +38,6 @@ export async function fetchWithAuthServer(
     },
     credentials: "include",
   })
-
-  console.log(response);
 
   // If access token expired, try to refresh
   

@@ -1,4 +1,5 @@
 import ProfessorDeleteButton from "@/components/client/professors/ProfessorDeleteButton";
+import Tooltip from "@/components/client/tooltip/Tooltip";
 import EditButton from "@/components/ui/buttons/EditButton";
 import ViewButton from "@/components/ui/buttons/ViewButton";
 import SearchInput from "@/components/ui/SearchInput";
@@ -86,7 +87,9 @@ export default async function ProfessorsPage({ params, searchParams }: PageProps
                 </TableCell>
                 <TableCell>
                   <div className="flex gap-2">
-                    <ViewButton link={`/app/institutions/${institution}/professors/${professor._id}`} />
+                    <Tooltip tooltip="Pogledaj profesora">
+                      <ViewButton link={`/app/institutions/${institution}/professors/${professor._id}`} />
+                    </Tooltip>
                     {
                       includesRole(role, ['Owner', 'Moderator']) && (
                         <>

@@ -117,10 +117,12 @@ export async function getBlogBySlug(slug: string, revalidate: number = 86400): P
         not_equals: 'draft'
       }
     },
-    limit: 1
+    limit: 1,
+    depth: 2,
   }
 
   const url = buildPayloadURL('/api/blogs', params);
+
   const response: PayloadQueryResponse<IBlog> = await payloadCMSFetch(url, {
     next: {
       tags: ['blogs', `blogs-${slug}`],
@@ -131,15 +133,17 @@ export async function getBlogBySlug(slug: string, revalidate: number = 86400): P
   return response.docs[0];
 }
 
-export async function getBlogs(limit: number = 100, customParams: PayloadQueryParams = {}): Promise<PayloadQueryResponse<IBlog>> {
+export async function getBlogs(limit: number = 100, page: number = 1, customParams: PayloadQueryParams = {}): Promise<PayloadQueryResponse<IBlog>> {
   const params: PayloadQueryParams = {
     limit,
+    page,
+    ...customParams
   }
 
   const url = buildPayloadURL('/api/blogs', params);
   const response: PayloadQueryResponse<IBlog> = await payloadCMSFetch(url, {
     next: {
-      tags: ['blogs'],
+      tags: ['blogs', `blogs-${limit}-${customParams.page}`],
     }
   });
 

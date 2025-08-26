@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Trash } from 'lucide-react';
+import { Trash2 } from 'lucide-react';
 
 interface ListItemProps {
   text: string;
@@ -22,7 +22,7 @@ const ListItem: React.FC<ListItemProps> = ({ text, index, deleteFunc }) => {
         title="Obriši"
         type="button"
       >
-        <Trash className="w-4 h-4" />
+        <Trash2 className="w-4 h-4" />
       </button>
     </div>
   );

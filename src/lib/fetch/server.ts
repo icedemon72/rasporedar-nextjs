@@ -141,16 +141,14 @@ export const getProfessor = async (institution: string, id: string, options: Req
   return data;
 }
 
-export const getInstitutionSchedules = async (id: string, options: RequestInit = {}): Promise<Schedule[]> => {
+export const getInstitutionSchedules = async (id: string, options: RequestInit = {}, query: Record<string, any>): Promise<Schedule[]> => {
   const next = {
     ...defaultNextOptions,
     ...options.next,
     tags: ['schedules', `schedules-institution-${id}`]
   }
 
-  const response = await fetchWithAuthServer(`/institutions/${id}/schedules`, {
-    next
-  });
+  const response = await fetchWithAuthServer(`/institutions/${id}/schedules`, { next }, query);
 
   const data: Schedule[] = await response.json();
   return data;
