@@ -187,3 +187,14 @@ blockquote {
 .blog-content hr {
   @apply border-t border-gray-200 dark:border-gray-700 my-8;
 }
+
+.embla {
+  overflow: hidden;
+}
+.embla__container {
+  display: flex;
+}
+.embla__slide {
+  flex: 0 0 100%;
+  padding: 0 1rem;
+}

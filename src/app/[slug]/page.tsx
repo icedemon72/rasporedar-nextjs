@@ -20,8 +20,6 @@ export default async function Page({ params }: PageProps) {
 
   const page = await getPageBySlug(slug);
 
-  console.log(page);
-
   if (!page) return notFound();
 
   return (

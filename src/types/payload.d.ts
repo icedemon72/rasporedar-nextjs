@@ -2,6 +2,12 @@ import { any } from "@payloadcms/richtext-lexical/lexical";
 import { SEO } from "./page";
 import { INavbar } from "./nav";
 
+export type PayloadButton = {
+  label: string;
+  url: string;
+  style?: 'primary' | 'secondary';
+}
+
 export interface PayloadFetchOptions {
   next?: {
     cache?: string;
@@ -73,10 +79,37 @@ export interface PayloadMedia {
   width: number;
 }
 
+export type IFooter = {
+  buttonSection?: {
+    title?: string;
+    button?: {
+      label: string;
+      url: string;
+    };
+  };
+  linksSection?: PayloadButton[];
+  contactSection?: Array<{
+    icon: PayloadMedia;
+    title: string;
+    subtitle?: string;
+  }>;
+  copyright?: string;
+  staticPages?: Array<{
+    label: string;
+    page: string | {
+      id: string;
+      slug: string;
+      title: string;
+    };
+  }>;
+};
+
+
 export interface ISiteSettings extends PayloadResponseDefaults {
   logo: string;
   title: string;
   navigationBar: INavbar;
+  footer: IFooter;
 }
 
 interface BlogBase {
@@ -97,24 +130,31 @@ export interface IBlog extends PayloadResponseDefaults, BlogBase {
 
 export type Priority = "above" | "below";
 
+export type CallToActionCard = {
+  title: string;
+  description?: string;
+  image: PayloadMedia;
+}
+
+export type QAItem = {
+  question: string;
+  answer: any;
+}
+
 export interface CallToActionBlock {
   blockType: "call-to-action";
   priority: Priority;
   title: string;
   description?: string;
-  buttons?: {
-    label: string;
-    url: string;
-  }[];
+  buttons?: PayloadButton[];
+  backgroundImage: PayloadMedia;
+  cards?: CallToActionCard[];
 }
 
 export interface AccordionBlock {
   blockType: "accordion";
   priority: Priority;
-  items: {
-    question: string;
-    answer: any;
-  }[];
+  items: QAItem[];
 }
 
 export interface FeatureListBlock {
@@ -137,6 +177,7 @@ export interface HeroBlock {
   buttons?: {
     label: string;
     url: string;
+    style: 'primary' | 'secondary';
   }[];
   icon?: PayloadMedia;
 }
@@ -160,14 +201,46 @@ export interface MediaGalleryBlock {
   }[];
 }
 
-export interface TestimonialBlock {
-  blockType: "testimonial";
-  priority: Priority;
+export interface TestimonialItem {
   quote: string;
   author: string;
   role?: string;
   avatar?: PayloadMedia;
 }
+
+export interface TestimonialBlock {
+  blockType: 'testimonial';
+  priority?: Priority;
+  title?: string;
+  description?: string;
+  testimonials: TestimonialItem[];
+}
+
+export type CardLinkItem = {
+    title: string;
+    description?: string;
+    image: PayloadMedia;
+    url: string;
+  }
+
+export interface CardLinksBlock {
+  blockType: "card_link";
+  blockName?: string;
+  title?: string;
+  description?: string;
+  priority?: Priority;
+  card_links: CardLinkItem[];
+}
+
+export interface FAQBlock {
+  blockType: "faq";
+  blockName?: string;
+  title: string;
+  description?: any;
+  priority: Priority;
+  accordion?: AccordionBlock[];
+}
+
 
 export type PageBlock =
   | CallToActionBlock
@@ -176,4 +249,6 @@ export type PageBlock =
   | HeroBlock
   | ImageTextBlock
   | MediaGalleryBlock
-  | TestimonialBlock;
+  | TestimonialBlock
+  | CardLinksBlock
+  | FAQBlock;

@@ -8,6 +8,7 @@ import { SiteSettingsProvider } from "@/context/site-settings-context";
 import { AuthProvider } from "@/context/auth-context";
 import { getCurrentUserServer } from "@/lib/auth/auth-server";
 import { ApiProvider } from "@/context/api-context";
+import Footer from "@/components/ui/footer/Footer";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -44,9 +45,13 @@ export default async function RootLayout({
                 <div className="min-h-screen h-screen w-screen flex flex-col md:grid grid-cols-[auto_1fr]">
                   <Navbar navigationBar={settings.navigationBar} userLoggedIn={initialUser} />
                   <div className="flex flex-col overflow-hidden">
-                    <main className="flex-1 bg-muted/10 overflow-x-hidden bg-primary">
-                      {children}
-                    </main>
+                    <div className="flex-1 bg-muted/10 overflow-x-hidden bg-primary">
+                      <main className="min-h-screen">
+                        {children}
+                      </main>
+                      {/* TODO: remove this... */}
+                      <Footer {...settings.footer} />
+                    </div>
                   </div>
                 </div>
                 <ToastContainer />
