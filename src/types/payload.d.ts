@@ -1,4 +1,4 @@
-import { any } from "@payloadcms/richtext-lexical/lexical";
+import { SerializedEditorState } from "@payloadcms/richtext-lexical/lexical";
 import { SEO } from "./page";
 import { INavbar } from "./nav";
 
@@ -109,6 +109,7 @@ export interface ISiteSettings extends PayloadResponseDefaults {
   logo: string;
   title: string;
   navigationBar: INavbar;
+  "call-to-action": CallToAction;
   footer: IFooter;
 }
 
@@ -123,7 +124,7 @@ interface BlogBase {
 }
 
 export interface IBlog extends PayloadResponseDefaults, BlogBase {
-  content: any;
+  content: SerializedEditorState;
   relatedBlogs: BlogBase[];
   seo: SEO;
 }
@@ -138,11 +139,10 @@ export type CallToActionCard = {
 
 export type QAItem = {
   question: string;
-  answer: any;
+  answer: SerializedEditorState;
 }
 
-export interface CallToActionBlock {
-  blockType: "call-to-action";
+export interface CallToAction {
   priority: Priority;
   title: string;
   description?: string;
@@ -188,7 +188,7 @@ export interface ImageTextBlock {
   imagePosition: "left" | "right";
   image: PayloadMedia;
   title?: string;
-  content?: any;
+  content?: SerializedEditorState;
 }
 
 export interface MediaGalleryBlock {
@@ -236,14 +236,43 @@ export interface FAQBlock {
   blockType: "faq";
   blockName?: string;
   title: string;
-  description?: any;
+  description?: SerializedEditorState;
   priority: Priority;
   accordion?: AccordionBlock[];
 }
 
+export interface FAQListBlock {
+  blockType: "faq-list";
+  blockName?: string;
+  title?: string;
+  groups: {
+    title: string;
+    faqs: QAItem[];
+  }[]
+}
+
+export interface WYSIWYGBlock {
+  blockType: 'wysiwyg',
+  blockName?: string;
+  text: SerializedEditorState;
+}
+
+export interface ContactFormBlock {
+  blockType: "contact-form",
+  blcokName?: string;
+  title?: string;
+  subtitle?: SerializedEditorState;
+  icons?: Array<{
+    icon: PayloadMedia;
+    text: RichText;
+  }>;
+  tags?: Array<{
+    text: string;
+  }>;
+}
+
 
 export type PageBlock =
-  | CallToActionBlock
   | AccordionBlock
   | FeatureListBlock
   | HeroBlock
@@ -251,4 +280,7 @@ export type PageBlock =
   | MediaGalleryBlock
   | TestimonialBlock
   | CardLinksBlock
-  | FAQBlock;
+  | FAQBlock
+  | FAQListBlock
+  | WYSIWYGBlock
+  | ContactFormBlock;

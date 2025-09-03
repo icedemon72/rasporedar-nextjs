@@ -9,6 +9,7 @@ export type User = {
   id: string;
   email: string;
   name?: string;
+  username: string;
   role: string;
 }
 
@@ -39,4 +40,13 @@ export interface RegisterUserBody {
 export interface BasicCreateResponse {
   message: string;
   _id: string;
+}
+
+export interface UpdateUserBody {
+  name: string;
+  email: string;
+  username: string;
+
+  oldPassword?: string;
+  newPassword?: string;
 }

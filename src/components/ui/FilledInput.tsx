@@ -1,6 +1,6 @@
 'use client';
 
-import React, { HTMLInputTypeAttribute } from "react";
+import React from "react";
 
 interface FilledInputProps {
   label: string;

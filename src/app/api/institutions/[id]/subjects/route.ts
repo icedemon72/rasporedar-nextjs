@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
 import { proxyToExpress } from '@/lib/fetch/express';
 import { revalidateTag } from 'next/cache';
 

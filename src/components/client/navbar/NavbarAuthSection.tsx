@@ -5,6 +5,9 @@ import { useAuth } from '@/context/auth-context';
 import NavItem from '@/components/ui/nav/NavItem';
 import { usePathname } from 'next/navigation';
 import NavbarSectionTitle from './NavbarSectionTitle';
+import { useApi } from '@/context/api-context';
+import { toast } from 'react-toastify';
+import { useRouter } from 'next/navigation';
 
 interface NavbarAuthSectionProps {
   children?: React.ReactNode;
@@ -15,6 +18,8 @@ const NavbarAuthSection: React.FC<NavbarAuthSectionProps> = ({
 }) => {
   const { user } = useAuth();
   const pathname = usePathname();
+  const router = useRouter();
+  const { api, client } = useApi();
 
   if (!user) {
     return (
@@ -25,6 +30,15 @@ const NavbarAuthSection: React.FC<NavbarAuthSectionProps> = ({
         <NavItem link={{ label: 'Registracija', url: '/auth/register' }}  active={pathname === '/auth/register'} />
       </div>
     );
+  }
+
+  const handleLogout = async () => {
+    await api(
+      () => client.logout(),
+    );
+
+    toast.success('Uspešno ste se izlogovali.');
+    window.location.reload();
   }
   
   return (
@@ -40,7 +54,12 @@ const NavbarAuthSection: React.FC<NavbarAuthSectionProps> = ({
       <div className="flex flex-col">
         <NavbarSectionTitle title={'Sesija'} />
         <NavItem link={{ label: 'Moj profil', url: '/app/profile' }} active={pathname === '/app/profile'} />
-        <NavItem link={{ label: 'Izloguj se', url: '/auth/logout' }} />
+        <button
+          onClick={() => handleLogout()}
+          className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-md text-left"
+        >
+          Izloguj se
+        </button>
         {user.role === 'Admin' && (
           <NavItem
             link={{

@@ -18,12 +18,6 @@ interface ProfessorFormBaseProps {
   submitText?: string;
 }
 
-const educationTemplate: ProfessorEducation = {
-  institution: '',
-  from: '',
-  to: ''
-}
-
 const ProfessorFormBase: React.FC<ProfessorFormBaseProps> = ({
   initialData,
   onSubmit,

@@ -29,6 +29,8 @@ export async function fetchWithAuthServer(
   const queryString = buildQueryString(queryParams);
   const url = `${API_BASE_URL}${endpoint}${queryString}`;
 
+  console.log(url);
+
   let response = await fetch(url, {
     ...options,
     headers: {

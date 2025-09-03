@@ -3,27 +3,50 @@
 import { useApi } from '@/context/api-context';
 import { OptionType } from '@/types/global';
 import { addItemToArrayOnKey, deleteItemFromArray } from '@/utils/update-array';
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { InstitutionCreateBody } from '@/types/fetch';
 import { useRouter } from 'next/navigation';
 import CardContainer from '@/components/ui/containers/CardContainer';
 import SelectComponent from '@/components/ui/SelectComponent';
 import Input from '@/components/ui/Input';
 import Link from 'next/link';
-import { Plus } from 'lucide-react';
+import { Plus, RefreshCcw, Save } from 'lucide-react';
 import ListItem from '@/components/ui/lists/ListItem';
 import ListContainer from '@/components/ui/lists/ListContainer';
 import { toast } from 'react-toastify';
 import { INSTITUTION_TYPES } from '@/constants/institutions';
+import { Institution } from '@/types/data';
+import CopyField from '@/components/ui/CopyField';
 
-const CreateInstitutionForm = () => {
+interface EditInstitutionFormProps {
+  institution: Institution;
+}
+
+const EditInstitutionForm: React.FC<EditInstitutionFormProps> = ({
+  institution
+}) => {
   const router = useRouter();
   const { api, client, isLoading } = useApi();
   const inputRef = useRef<HTMLInputElement | null>(null);
+  
   const [ name, setName ] = useState<string>('');
   const [ typeOf, setTypeOf ] = useState<OptionType | null>(null);
   const [ dpt, setDpt ] = useState<string>('');
   const [ departments, setDepartments ] = useState<string[]>([]);
+
+  useEffect(() => {
+    if (institution) {
+      setName(institution.name || '');
+      
+      // Find the matching type option
+      const foundType = INSTITUTION_TYPES.find(option => option.value === institution.typeOf);
+      if (foundType) {
+        setTypeOf(foundType);
+      }
+      
+      setDepartments(institution.departments || []);
+    }
+  }, [institution]);
 
   const handleDepartments = (elem: any, key: string | null = 'Enter') => {
     const toAdd = addItemToArrayOnKey(departments, elem, key, true);
@@ -34,37 +57,38 @@ const CreateInstitutionForm = () => {
   }
 
   const handleDeleteDepartment = (index: number) => {
-    let tempDepartments = [ ...departments ]; 
+    let tempDepartments = [...departments]; 
     const toDelete = deleteItemFromArray(tempDepartments, index);
     if (toDelete) {
       setDepartments(toDelete);
     }
   }
 
-  const handleCreate = async () => {
+  const handleUpdate = async () => {
     const body: InstitutionCreateBody = {
-      name, typeOf: typeOf?.value, departments
+      name, 
+      typeOf: typeOf?.value, 
+      departments
     }
     
     await api(
-      () => client.createInstitution(body),
+      () => client.updateInstitution(institution._id, body),
       {
         onSuccess(result) {
-          toast.success('Grupa je uspešno kreirana.');
+          toast.success('Grupa je uspešno ažurirana.');
           setTimeout(() => {
-            router.push(`/app/institutions/${result._id}/edit`);
+            router.refresh(); // Refresh to show updated data
           }, 1000);
         },
         onError(error) {
-          toast.error('Greška prilikom kreiranja grupe. ' + error?.message);
+          toast.error('Greška prilikom ažuriranja grupe. ' + error?.message);
         },
       }
     );
   } 
 
   return (
-    <CardContainer>
-      <h1 className="text-xl font-bold py-5 text-center">Napravi grupu</h1>
+    <div className="space-y-4">
       <div className="mb-4">
         <Input 
           id="name"
@@ -124,12 +148,39 @@ const CreateInstitutionForm = () => {
           </ListContainer>
         )
       }
-      <div className="flex justify-end w-full mt-3">
-        <button className="w-full md:w-1/2 lg:w-1/3 btn-primary" onClick={handleCreate} disabled={isLoading}>Napravi grupu!</button>
+
+      <div>
+        <label className="label-primary pb-2">Kodovi</label>
+        <div className="flex justify-between">
+          <div>
+            <label className="label-primary">Kod za korisnike</label>
+            <div className="flex gap-2">
+              <CopyField text={institution.code!} />
+              <button className="btn-primary"><RefreshCcw /></button>
+            </div>
+          </div>
+          <div>
+            <label className="label-primary">Kod za moderatore</label>
+            <div className="flex gap-2">
+              <CopyField text={institution.moderatorCode!} />
+              <button className="btn-primary"><RefreshCcw /></button>
+            </div>
+          </div>
+        </div>
       </div>
-      <p className="text-sm text-center my-4">Trebaš biti u grupi? <Link className="underline hover:no-underline" href='/app/institutions/join'>Pridruži se</Link></p>
-    </CardContainer>
+
+      <div className="flex justify-start">
+        <button 
+          type="submit" 
+          className="w-full lg:w-auto btn-primary px-4 my-4"
+          onClick={() => handleUpdate()}
+        >
+          <Save />
+          Sačuvaj izmene
+        </button>
+      </div>
+    </div>
   );
 }
 
-export default CreateInstitutionForm;
+export default EditInstitutionForm;

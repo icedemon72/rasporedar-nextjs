@@ -9,6 +9,7 @@ import { AuthProvider } from "@/context/auth-context";
 import { getCurrentUserServer } from "@/lib/auth/auth-server";
 import { ApiProvider } from "@/context/api-context";
 import Footer from "@/components/ui/footer/Footer";
+import CTABlock from "@/components/blocks/cta/CTABlock";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -50,6 +51,7 @@ export default async function RootLayout({
                         {children}
                       </main>
                       {/* TODO: remove this... */}
+                      <CTABlock {...settings["call-to-action"]}  />
                       <Footer {...settings.footer} />
                     </div>
                   </div>

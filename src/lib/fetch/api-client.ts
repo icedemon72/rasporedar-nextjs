@@ -1,4 +1,4 @@
-import { BasicCreateResponse, InstitutionCreateBody, LoginResponse, RegisterUserBody } from "@/types/fetch"
+import { BasicCreateResponse, InstitutionCreateBody, LoginResponse, RegisterUserBody, UpdateUserBody, User } from "@/types/fetch"
 import { fetchWithAuthClient } from "../auth/auth"
 import { Institution, Professor, Subject } from "@/types/data";
 
@@ -40,6 +40,21 @@ export class ApiClient {
     return data;
   }
 
+  async logout(): Promise<{}> {
+    const response = await fetchWithAuthClient(`/api/auth/logout`, {
+      method: 'POST',
+      credentials: 'include'
+    }, true);
+  
+    const data = await response.json();
+  
+    if (!response.ok) {
+      throw new Error(data.message || 'Logout failed.');
+    }
+  
+    return data;
+  }
+
   async addProfessor(institution: string, body: Omit<Professor, '_id' | 'institution'>): Promise<BasicCreateResponse> {
     const response = await fetchWithAuthClient(`/api/institutions/${institution}/professors`, {
       method: 'POST',
@@ -63,6 +78,25 @@ export class ApiClient {
   async deleteProfessor(institution: string, professorId: string): Promise<{}> {
     const response = await fetchWithAuthClient(`/api/institutions/${institution}/professors/${professorId}`, {
       method: 'DELETE',
+    }, true);
+
+    const data = await response.json();
+    return data;
+  }
+
+  async updateInstitution(institution: string, body: InstitutionCreateBody): Promise<Institution> {
+    const response = await fetchWithAuthClient(`/api/institutions/${institution}`, {
+      method: 'PATCH',
+      body: JSON.stringify(body)
+    }, true);
+
+    const data: Institution = await response.json();
+    return data;
+  }
+
+  async deleteInstitution(institution: string): Promise<{}> {
+    const response = await fetchWithAuthClient(`/api/institutions/${institution}`, {
+      method: 'DELETE'
     }, true);
 
     const data = await response.json();
@@ -109,6 +143,16 @@ export class ApiClient {
     }, true);
 
     const data: BasicCreateResponse = await response.json();
+    return data;
+  }
+
+  async updateUser(body: UpdateUserBody): Promise<User> {
+    const response = await fetchWithAuthClient('/users/edit', {
+      method: 'PATCH',
+      body: JSON.stringify(body)
+    });
+
+    const data: User = await response.json();
     return data;
   }
 }

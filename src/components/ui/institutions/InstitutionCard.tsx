@@ -20,39 +20,41 @@ const InstitutionCard: React.FC<InstitutionCardProps> = ({ institution }) => {
   const { user } = useAuth();
   const isOwner = user?.id === institution.createdBy;
 
+  const linkPrefix = `/app/institutions/${institution._id}`;
+
   return (
     <div className="bg-white border rounded-lg shadow-sm hover:shadow-md transition-shadow p-5 flex flex-col h-full">
       <div>
-        <h2 className="text-lg font-semibold text-gray-800">
+        <Link href={linkPrefix} className="text-lg font-semibold text-gray-800">
           {institution.name}
-        </h2>
+        </Link>
         <p className="text-sm text-gray-500">ID: {institution._id}</p>
       </div>
 
       <div className="flex flex-col gap-2">
         <InstitutionLink
-          href={`/app/institutions/${institution._id}/subjects`}
+          href={`${linkPrefix}/subjects`}
           icon={<BookOpen className="w-4 h-4" />}
           label="Predmeti"
         />
         <InstitutionLink
-          href={`/app/institutions/${institution._id}/professors`}
+          href={`${linkPrefix}/professors`}
           icon={<Users className="w-4 h-4" />}
           label="Profesori"
         />
         <InstitutionLink
-          href={`/app/institutions/${institution._id}/schedules`}
+          href={`${linkPrefix}/schedules`}
           icon={<Calendar className="w-4 h-4" />}
           label="Rasporedi"
         />
         <InstitutionLink
-          href={`/app/institutions/${institution._id}/users`}
+          href={`${linkPrefix}/users`}
           icon={<UserCog className="w-4 h-4" />}
           label="Korisnici"
         />
         {isOwner && (
           <InstitutionLink
-            href={`/app/institutions/${institution._id}/edit`}
+            href={`${linkPrefix}/edit`}
             icon={<Pencil className="w-4 h-4" />}
             label="Uredi"
           />

@@ -1,21 +1,21 @@
 'use client';
 
-import React from 'react';
-import DeleteModal from '@/components/ui/modals/DeleteModal';
+import React from 'react'
+import { Institution } from '@/types/data'
+import { Trash2 } from 'lucide-react';
 import { ModalHost } from '@/components/ui/modals/ModalHost';
 import { useApi } from '@/context/api-context';
 import { useModal } from '@/hooks/use-modal';
-import { Professor } from '@/types/data';
-import { Trash2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
+import DeleteModal from '@/components/ui/modals/DeleteModal';
 
-interface ProfessorDeleteEditButtonProps {
-  professor: Professor;
+interface InstitutionDeleteButtonProps {
+  institution: Institution;
 }
 
-const ProfessorDeleteEditButton: React.FC<ProfessorDeleteEditButtonProps> = ({
-  professor
+const InstitutionDeleteButton: React.FC<InstitutionDeleteButtonProps> = ({
+  institution
 }) => {
   const router = useRouter();
   const modal = useModal();
@@ -23,31 +23,30 @@ const ProfessorDeleteEditButton: React.FC<ProfessorDeleteEditButtonProps> = ({
 
   const handleOpenDeleteModal = () => {
     modal.open('delete', {
-      id: professor._id,
-      title: `Da li želite da obrišete profesora '${professor.name}'?`,
+      id: institution._id,
+      title: `Da li želite da obrišete grupu '${institution.name}'?`,
       description: 'Ova akcija je nepovratna i može biti vrlo opasna. Da li ste sigurni?',
       onConfirm: async () => {
         await api(
-          () => client.deleteProfessor(professor.institution, professor._id),
+          () => client.deleteInstitution(institution._id),
           {
             onSuccess() {
-              toast.success('Profesor je uspešno obirsan.');
-              router.replace(`/app/institutions/${professor.institution}/professors/`);
+              toast.success('Grupa je uspešno obirsana.');
+              router.replace(`/app/institutions`);
             }
           }
         );
       }
     });
   }
-
   return (
     <>
       <button className="w-full lg:w-auto btn-primary px-4 my-4" onClick={handleOpenDeleteModal}>
         <Trash2 />
-        Obriši profesora
+        Obriši grupu
       </button>
       <ModalHost 
-        key={professor._id}
+        key={institution._id}
         registry={{
           'delete': DeleteModal
         }}
@@ -58,4 +57,4 @@ const ProfessorDeleteEditButton: React.FC<ProfessorDeleteEditButtonProps> = ({
   );
 }
 
-export default ProfessorDeleteEditButton;
+export default InstitutionDeleteButton

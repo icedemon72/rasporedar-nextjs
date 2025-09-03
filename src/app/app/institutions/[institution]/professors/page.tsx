@@ -1,5 +1,5 @@
 import ProfessorDeleteButton from "@/components/client/professors/ProfessorDeleteButton";
-import Tooltip from "@/components/client/tooltip/Tooltip";
+import TooltipWrapper from "@/components/client/tooltip/TooltipWrapper";
 import EditButton from "@/components/ui/buttons/EditButton";
 import ViewButton from "@/components/ui/buttons/ViewButton";
 import SearchInput from "@/components/ui/SearchInput";
@@ -7,7 +7,6 @@ import Table from "@/components/ui/table/Table";
 import TableCell from "@/components/ui/table/TableCell";
 import TableRow from "@/components/ui/table/TableRow";
 import PageWrapper from "@/components/wrappers/PageWrapper";
-import { getCurrentUserServer } from "@/lib/auth/auth-server";
 import { includesRole } from "@/lib/auth/role-guard";
 import { getInstitution, getInstitutionProfessors, getRoleInInstitution } from "@/lib/fetch/server";
 import { PageProps } from "@/types/page";
@@ -87,13 +86,15 @@ export default async function ProfessorsPage({ params, searchParams }: PageProps
                 </TableCell>
                 <TableCell>
                   <div className="flex gap-2">
-                    <Tooltip tooltip="Pogledaj profesora">
+                    <TooltipWrapper tooltip="Pogledaj profesora">
                       <ViewButton link={`/app/institutions/${institution}/professors/${professor._id}`} />
-                    </Tooltip>
+                    </TooltipWrapper>
                     {
                       includesRole(role, ['Owner', 'Moderator']) && (
                         <>
-                          <EditButton link={`/app/institutions/${institution}/professors/${professor._id}/edit`} />
+                          <TooltipWrapper tooltip="Uredi profesora">
+                            <EditButton link={`/app/institutions/${institution}/professors/${professor._id}/edit`} />
+                          </TooltipWrapper>
                           <ProfessorDeleteButton professor={professor} />
                         </>
                       )

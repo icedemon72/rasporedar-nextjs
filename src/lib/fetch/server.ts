@@ -2,12 +2,14 @@ import { Institution, Professor, ProfessorsSubjects, Schedule, Subject } from "@
 import { fetchWithAuthServer } from "../auth/auth-server"
 import { cookies } from "next/headers";
 import { InstitutionRole } from "@/types/global";
+import { User } from "@/types/fetch";
+import { handleApiResponse } from "./handle-api-response";
 
 const defaultNextOptions = {
   revalidate: 3600,
 }
 
-export const getInstitution = async (id: string, options: RequestInit = {}): Promise<Institution> => {
+export const getInstitution = async (id: string, options: RequestInit = {}, queryParams: Record<string, any> = {}): Promise<Institution> => {
   const next = {
     ...defaultNextOptions,
     ...options.next,
@@ -15,11 +17,11 @@ export const getInstitution = async (id: string, options: RequestInit = {}): Pro
   }
 
   const response = await fetchWithAuthServer(`/institutions/${id}`, {
-    next
-  });
+    next,
+  }, queryParams
+);
 
-  const data: Institution = await response.json();
-  return data;
+  return handleApiResponse<Institution>(response);
 }
 
 export const getUserInstitutions = async (options: RequestInit = { next: { revalidate: 0 } }): Promise<Institution[]> => {
@@ -37,8 +39,7 @@ export const getUserInstitutions = async (options: RequestInit = { next: { reval
     next
   });
 
-  const data: Institution[] = await response.json();
-  return data;
+  return handleApiResponse<Institution[]>(response);
 }
 
 export const getRoleInInstitution = async (id: string, options: RequestInit = {}): Promise<InstitutionRole>  => {
@@ -70,8 +71,7 @@ export const getInstitutionSubjects = async (id: string, options: RequestInit = 
     next
   });
 
-  const data: Subject[] = await response.json();
-  return data;
+  return handleApiResponse<Subject[]>(response);
 }
 
 export const getSubject = async (institution: string, id: string, options: RequestInit & { fullInfo?: boolean } = {}): Promise<Subject> => {
@@ -89,8 +89,7 @@ export const getSubject = async (institution: string, id: string, options: Reque
     next
   });
 
-  const data: Subject = await response.json();
-  return data;
+  return handleApiResponse<Subject>(response);
 }
 
 export const getInstitutionProfessors = async (id: string, options: RequestInit = {}): Promise<Professor[]> => {
@@ -104,9 +103,7 @@ export const getInstitutionProfessors = async (id: string, options: RequestInit 
     next
   });
 
-  const data: Professor[] = await response.json();
-
-  return data;
+  return handleApiResponse<Professor[]>(response);
 }
 
 export const getProfessorSubjects = async (institution: string, id: string, options: RequestInit = {}): Promise<ProfessorsSubjects> => {
@@ -120,9 +117,7 @@ export const getProfessorSubjects = async (institution: string, id: string, opti
     next
   });
 
-  const data: ProfessorsSubjects = await response.json();
-
-  return data;
+  return handleApiResponse<ProfessorsSubjects>(response);
 }
 
 export const getProfessor = async (institution: string, id: string, options: RequestInit = {}): Promise<Professor> => {
@@ -136,9 +131,7 @@ export const getProfessor = async (institution: string, id: string, options: Req
     next
   });
 
-  const data: Professor = await response.json();
-
-  return data;
+  return handleApiResponse<Professor>(response);
 }
 
 export const getInstitutionSchedules = async (id: string, options: RequestInit = {}, query: Record<string, any>): Promise<Schedule[]> => {
@@ -150,8 +143,7 @@ export const getInstitutionSchedules = async (id: string, options: RequestInit =
 
   const response = await fetchWithAuthServer(`/institutions/${id}/schedules`, { next }, query);
 
-  const data: Schedule[] = await response.json();
-  return data;
+  return handleApiResponse<Schedule[]>(response);
 }
 
 export const getSchedule = async (institution: string, id: string, options: RequestInit = {}): Promise<Schedule> => {
@@ -165,6 +157,16 @@ export const getSchedule = async (institution: string, id: string, options: Requ
     next
   });
 
-  const data: Schedule = await response.json();
-  return data;
+  return handleApiResponse<Schedule>(response);
+}
+
+export const getUser = async (options: RequestInit = {}): Promise<User> => {
+  const next = {
+    ...defaultNextOptions,
+    ...options.next,
+  }
+
+  const response = await fetchWithAuthServer(`/users`, { next });
+
+  return handleApiResponse<User>(response);
 }

@@ -7,6 +7,7 @@ import { ModalHost } from '@/components/ui/modals/ModalHost';
 import { useApi } from '@/context/api-context';
 import { useModal } from '@/hooks/use-modal';
 import { Professor } from '@/types/data';
+import TooltipWrapper from '../tooltip/TooltipWrapper';
 
 
 interface ProfessorDeleteButtonProps {
@@ -39,7 +40,9 @@ const ProfessorDeleteButton: React.FC<ProfessorDeleteButtonProps> = ({
 
   return (
     <>
-      <DeleteButton onDelete={() => handleOpenDeleteModal()} />
+      <TooltipWrapper tooltip="Obriši profesora">
+        <DeleteButton onDelete={() => handleOpenDeleteModal()} />
+      </TooltipWrapper>
       <ModalHost 
         key={professor._id}
         registry={{

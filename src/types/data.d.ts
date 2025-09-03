@@ -17,6 +17,9 @@ export type Institution = {
   role: string;
   typeOf: string;
   updatedAt: string;
+
+  code?: string;
+  moderatorCode?: string;
 }
 
 export type Subject = {

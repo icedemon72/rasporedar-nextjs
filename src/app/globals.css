@@ -198,3 +198,7 @@ blockquote {
   flex: 0 0 100%;
   padding: 0 1rem;
 }
+
+.contact-icons b, .contact-icons strong {
+  font-weight: 600;
+}

@@ -1,46 +1,19 @@
 import React from 'react';
 import type {
   PageBlock,
-  ImageTextBlock,
+
   MediaGalleryBlock,
 } from '@/types/payload';
-import { toHTML } from '@/utils/serializeLexical';
-import clsx from 'clsx';
 import HeroBlock from '../blocks/hero/HeroBlock';
 import FeatureListBlock from '../blocks/feature-list/FeatureListBlock';
-import CTABlock from '../blocks/cta/CTABlock';
 import TestimonialBlock from '../blocks/testimonial/TestimonialBlock';
 import CardLinksBlock from '../blocks/card-links/CardLinksBlock';
 import AccordionBlock from '../blocks/accordion/AccordionBlock';
 import FAQBlock from '../blocks/faq/FAQBlock';
-
-/* ------------------------------
-   Image + Text
---------------------------------*/
-const ImageText: React.FC<ImageTextBlock> = ({
-  imagePosition,
-  image,
-  title,
-  content,
-}) => (
-  <section
-    className={clsx(
-      "flex flex-col md:flex-row items-center gap-8 py-16",
-      imagePosition === "right" && "md:flex-row-reverse"
-    )}
-  >
-    <img src={image.url} alt={title || ""} className="w-full md:w-1/2 rounded-lg" />
-    <div className="w-full md:w-1/2">
-      {title && <h2 className="text-3xl font-bold mb-4">{title}</h2>}
-      {content && (
-        <div
-          className="prose prose-gray max-w-none"
-          dangerouslySetInnerHTML={{ __html: toHTML(content) }}
-        />
-      )}
-    </div>
-  </section>
-);
+import FAQListBlock from '../blocks/faq-list/FAQListBlock';
+import WYSIWYGBlock from '../blocks/wysiwyg/WYSIWYGBlock';
+import ImageTextBlock from '../blocks/image-text/ImageTextBlock';
+import ContactFormBlock from '../blocks/contact-form/ContactFormBlock';
 
 /* ------------------------------
    Media Gallery
@@ -76,22 +49,26 @@ const BlockWrapper: React.FC<PageBlock & { isHome?: boolean }> = ({
   switch (block.blockType) {
     case 'hero':
       return <HeroBlock {...block} isHome={isHome} />;
-    case 'call-to-action':
-      return <CTABlock {...block} />;
     case 'accordion':
       return <AccordionBlock {...block} />;
     case 'faq':
       return <FAQBlock {...block} />;
+    case 'faq-list':
+      return <FAQListBlock {...block} />;
     case 'feature-list':
       return <FeatureListBlock {...block} />;
     case 'image-text':
-      return <ImageText {...block} />;
+      return <ImageTextBlock {...block} />;
     case 'media-gallery':
       return <MediaGallery {...block} />;
     case 'testimonial':
       return <TestimonialBlock {...block} />;
     case 'card_link':
-      return <CardLinksBlock {...block} />
+      return <CardLinksBlock {...block} />;
+    case 'contact-form':
+      return <ContactFormBlock {...block} />
+    case 'wysiwyg':
+      return <WYSIWYGBlock {...block} />
     default:
       return null;
   }

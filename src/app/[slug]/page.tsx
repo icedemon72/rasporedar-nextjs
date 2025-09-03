@@ -23,12 +23,18 @@ export default async function Page({ params }: PageProps) {
   if (!page) return notFound();
 
   return (
-    <>
+    <div className="space-y-4">
       {
         page.layout
         .filter((b) => b.priority === "above")
         .map((block, i) => <BlockWrapper key={i} {...block} />)
       }
-    </>
+
+      {
+        page.layout
+        .filter((b) => b.priority !== "above")
+        .map((block, i) => <BlockWrapper key={i} {...block} />)
+      }
+    </div>
   );
 }

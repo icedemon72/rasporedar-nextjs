@@ -12,28 +12,30 @@ const FAQBlock: React.FC<FAQBlockType> = ({
   if (!accordion?.length) return null;
 
   return (
-    <section className="flex">
-      <div className="mb-12">
-        <h2 className="text-3xl font-bold text-gray-900">{title}</h2>
-        {description && (
-          <div
-            className="mt-4 text-gray-700"
-            dangerouslySetInnerHTML={{ __html: toHTML(description) }}
-          />
-        )}
-      </div>
+      <section className="flex gap-4 max-w-4xl mx-auto">
+        <div className="mb-12 max-w-sm flex-0">
+          <h2 className="text-3xl font-bold text-gray-900">{title}</h2>
+          {
+            description && (
+              <div
+                className="mt-4 text-gray-700 max-w-lg"
+                dangerouslySetInnerHTML={{ __html: toHTML(description) }}
+              />
+            )}
 
-      <div className="flex-1">
-        {
-          accordion.map((block, i) => {
-            if (block.blockType === 'accordion') {
-              return <AccordionBlock key={i} {...(block as AccordionBlockType)} />;
-            }
-            return null;
-          })
-        }
-      </div>
-    </section>
+        </div>
+
+        <div className="flex-1">
+          {
+            accordion.map((block, i) => {
+              if (block.blockType === 'accordion') {
+                return <AccordionBlock key={i} {...(block as AccordionBlockType)} />;
+              }
+              return null;
+            })
+          }
+        </div>
+      </section>
   );
 };
 

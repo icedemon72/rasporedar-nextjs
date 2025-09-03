@@ -1,9 +1,9 @@
-import { CallToActionBlock } from '@/types/payload';
+import { CallToAction } from '@/types/payload';
 import clsx from 'clsx';
 import Image from 'next/image';
 import React from 'react';
 
-interface CTABlockProps extends CallToActionBlock {}
+interface CTABlockProps extends CallToAction {}
 
 const CTABlock: React.FC<CTABlockProps> = ({
   title,

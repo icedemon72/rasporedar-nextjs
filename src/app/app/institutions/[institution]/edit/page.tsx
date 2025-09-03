@@ -1,3 +1,6 @@
+import EditInstitutionForm from "@/components/client/institutions/edit/EditInstitutionForm";
+import InstitutionDeleteButton from "@/components/client/institutions/edit/InstitutionDeleteButton";
+import PageWrapper from "@/components/wrappers/PageWrapper";
 import { guardRoleInInstitution } from "@/lib/auth/role-guard";
 import { getInstitution } from "@/lib/fetch/server";
 import { Institution } from "@/types/data";
@@ -19,9 +22,25 @@ export default async function InstitutionEditPage({ params }: PageProps) {
 
   await guardRoleInInstitution(institution, ['Owner']);
 
-  const institutionRes = await getInstitution(institution);
+  const institutionRes = await getInstitution(institution, {}, { code: true });
 
   return (
-    <>{ institutionRes.name }</>
+    <PageWrapper 
+      title={`Uredi grupu '${institutionRes.name}'`}
+      breadcrumbs={{
+        links: [
+          { label: 'Panel', url: '/app' },
+          { label: 'Moje grupe', url: '/app/institutions'  },
+          { label: institutionRes.name, url: `/app/institutions/${institution}` },
+          { label: 'Uredi' },
+        ]
+      }}
+    >
+      <div className="flex justify-end">
+        <InstitutionDeleteButton institution={institutionRes} />
+      </div>
+
+      <EditInstitutionForm institution={institutionRes} />
+    </PageWrapper>
   );
 }

@@ -1,4 +1,5 @@
 import SubjectDeleteButton from "@/components/client/subjects/SubjectDeleteButton";
+import TooltipWrapper from "@/components/client/tooltip/TooltipWrapper";
 import EditButton from "@/components/ui/buttons/EditButton";
 import ViewButton from "@/components/ui/buttons/ViewButton";
 import SearchInput from "@/components/ui/SearchInput";
@@ -85,12 +86,18 @@ export default async function SubjectsPage({ params, searchParams }: PageProps) 
                 </TableCell>
                 <TableCell>
                   <div className="flex gap-2">
-                    <ViewButton link={`/app/institutions/${institution}/subjects/${subject._id}`} />
+                    <TooltipWrapper tooltip="Vidi informacije o predmetu">
+                      <ViewButton link={`/app/institutions/${institution}/subjects/${subject._id}`} />
+                    </TooltipWrapper>
                      {
                         includesRole(role, ['Owner', 'Moderator']) && (
                           <>
-                            <EditButton link={`/app/institutions/${institution}/subjects/${subject._id}/edit`} />
-                            <SubjectDeleteButton subject={subject} />
+                            <TooltipWrapper tooltip="Uredi predmet">
+                              <EditButton link={`/app/institutions/${institution}/subjects/${subject._id}/edit`} />
+                            </TooltipWrapper>
+                            <TooltipWrapper tooltip="Obriši predmet">
+                              <SubjectDeleteButton subject={subject} />
+                            </TooltipWrapper>
                           </>
                         )
                       }
