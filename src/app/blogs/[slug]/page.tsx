@@ -3,6 +3,7 @@ import PageWrapper from "@/components/wrappers/PageWrapper";
 import { getBlogBySlug } from "@/lib/payloadcms/payloadcms";
 import { SEOMapper } from "@/lib/seo/seoMapper";
 import { PageProps } from "@/types/page";
+import { getPayloadURL } from "@/utils/docker";
 import { toHTML } from "@/utils/serializeLexical";
 import { notFound } from "next/navigation";
 
@@ -17,7 +18,7 @@ export async function generateMetadata({ params }: PageProps) {
   const seoMapped = {
     ...seo,
     openGraph: {
-      images: `${process.env.NEXT_PUBLIC_PAYLOAD_CMS_URL}${seo?.openGraph?.images?.url}`
+      images: `${getPayloadURL()}${seo?.openGraph?.images?.url}`
     }
   }
 

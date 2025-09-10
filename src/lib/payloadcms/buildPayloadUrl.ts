@@ -1,7 +1,8 @@
 import { PayloadQueryParams } from "@/types/payload";
+import { getPayloadURL } from "@/utils/docker";
 
 export function buildPayloadURL(base: string, params: PayloadQueryParams = {}): string {
-  const url = new URL(base, process.env.NEXT_PUBLIC_PAYLOAD_CMS_URL);
+  const url = new URL(base, getPayloadURL());
   const searchParams = url.searchParams;
 
   if (params.where) {

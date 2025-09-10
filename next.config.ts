@@ -1,7 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-    images: {
+  output: process.env.DEPLOY_ENV === 'DEV' ? undefined : 'standalone',
+  images: {
     remotePatterns: [
       {
         protocol: "http",
@@ -10,8 +11,8 @@ const nextConfig: NextConfig = {
         pathname: "/**",
       },  
     ],
-    unoptimized: true,
-  },
+  unoptimized: true,
+},
 };
 
 export default nextConfig;

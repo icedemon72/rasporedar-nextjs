@@ -1,4 +1,5 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { getPayloadURL } from '@/utils/docker';
+import { NextResponse } from 'next/server';
 
 export async function POST(req: Request) {
   const body = await req.json();
@@ -10,7 +11,7 @@ export async function POST(req: Request) {
   }
 
   try {
-    const payloadResponse = await fetch(`${process.env.NEXT_PUBLIC_PAYLOAD_CMS_URL}/api/contact`, {
+    const payloadResponse = await fetch(`${getPayloadURL()}/api/contact`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

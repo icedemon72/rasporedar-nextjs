@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
+import { getApiURL } from './utils/docker';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'
+const API_BASE_URL = getApiURL() || 'http://localhost:3001';
 
 // Protected routes that require authentication - updated for /app/app/ structure
 const protectedRoutes = ['/app'];

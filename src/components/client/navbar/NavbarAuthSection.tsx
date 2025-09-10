@@ -8,6 +8,7 @@ import NavbarSectionTitle from './NavbarSectionTitle';
 import { useApi } from '@/context/api-context';
 import { toast } from 'react-toastify';
 import { useRouter } from 'next/navigation';
+import { getPayloadURL } from '@/utils/docker';
 
 interface NavbarAuthSectionProps {
   children?: React.ReactNode;
@@ -64,7 +65,7 @@ const NavbarAuthSection: React.FC<NavbarAuthSectionProps> = ({
           <NavItem
             link={{
               label: 'Admin Panel',
-              url: `${process.env.NEXT_PUBLIC_PAYLOAD_CMS_URL}/admin`,
+              url: `${getPayloadURL()}/admin`,
             }}
           />
         )}

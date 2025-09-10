@@ -1,0 +1,23 @@
+version: "3.9"
+
+services:
+  nextjs:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: runner
+    env_file:
+      - .env.production
+    environment:
+      NODE_ENV: production
+      PORT: ${PORT:-3000}
+      NEXT_TELEMETRY_DISABLED: "1"
+    ports:
+      - "${PUBLISH_PORT:-7200}:3000"
+    restart: unless-stopped
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+volumes:
+  node_modules:
+  next_cache:

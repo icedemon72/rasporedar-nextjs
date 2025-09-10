@@ -1,8 +1,9 @@
 import { IBlog, ISiteSettings, PayloadFetchOptions, PayloadPage, PayloadQueryParams, PayloadQueryResponse } from '@/types/payload';
 import { headers} from 'next/headers';
 import { buildPayloadURL } from './buildPayloadUrl';
+import { getPayloadURL } from '@/utils/docker';
 
-const baseUrl = process.env.NEXT_PUBLIC_PAYLOAD_CMS_URL;
+const baseUrl = getPayloadURL();
 const apiKey = process.env.PAYLOAD_CMS_KEY;
 
 if (!baseUrl) throw new Error('NEXT_PUBLIC_PAYLOAD_CMS_URL environment variable is not defined');

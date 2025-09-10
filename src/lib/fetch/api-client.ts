@@ -1,9 +1,10 @@
 import { BasicCreateResponse, InstitutionCreateBody, LoginResponse, RegisterUserBody, UpdateUserBody, User } from "@/types/fetch"
 import { fetchWithAuthClient } from "../auth/auth"
 import { Institution, Professor, Subject } from "@/types/data";
+import { getApiURL } from "@/utils/docker";
 
 export class ApiClient {
-  protected API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+  protected API_BASE_URL = getApiURL() || 'http://localhost:3001';
 
   async createInstitution(body: InstitutionCreateBody) {
     const response = await fetchWithAuthClient('/api/institutions', {

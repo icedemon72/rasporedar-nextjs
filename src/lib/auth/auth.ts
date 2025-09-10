@@ -1,6 +1,7 @@
 import { LoginResponse, User } from "@/types/fetch"
+import { getApiURL } from "@/utils/docker";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001"
+const API_BASE_URL = getApiURL() || "http://localhost:3001"
 
 async function safeParseJSON(response: Response) {
   try {

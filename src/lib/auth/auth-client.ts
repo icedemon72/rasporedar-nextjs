@@ -1,6 +1,7 @@
 import type { LoginResponse } from '@/types/fetch';
+import { getApiURL } from '@/utils/docker';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+const API_BASE_URL = getApiURL() || 'http://localhost:3001';
 
 // Login function
 export async function login(email: string, password: string): Promise<LoginResponse> {

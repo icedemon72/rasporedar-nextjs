@@ -1,8 +1,9 @@
 import { cookies } from "next/headers"
 import { redirect } from "next/navigation"
 import type { User, LoginResponse } from '@/types/fetch';
+import { getApiURL } from "@/utils/docker";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001"
+const API_BASE_URL = getApiURL() || "http://localhost:3001"
 
 function buildQueryString(params: Record<string, any> = {}): string {
   const query = new URLSearchParams()
