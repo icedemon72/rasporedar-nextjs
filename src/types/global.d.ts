@@ -19,7 +19,7 @@ export type ModalState = {
   props?: any
 };
 
-export type ModalType = 'subject' | 'time' | 'delete' | null;
+export type ModalType = 'subject' | 'time' | 'delete' | 'cell' | null;
 
 export interface ScheduleModalState {
   type: ModalType;

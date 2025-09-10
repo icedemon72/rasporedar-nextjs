@@ -3,10 +3,10 @@ import { ScheduleStyles } from "@/types/global";
 export const scheduleCustomStyles: ScheduleStyles = {
 	default: {
 		background: 'bg-white',
-		titleBackground: 'bg-gray-300',
-		rowStyle: 'odd:bg-gray-200 even:bg-white',
+		titleBackground: 'bg-gray-50',
+		rowStyle: 'even:bg-gray-50 odd:bg-gray-100',
 		colStyle: 'border-r border-y last:border-r-0 border-black',
-		clockCol: 'border-y border-r border-black bg-gray-300'
+		clockCol: 'border-y border-r border-black'
 	},
 	ice: {
 		background: 'bg-blue-100',

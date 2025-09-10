@@ -60,7 +60,7 @@ export const getRoleInInstitution = async (id: string, options: RequestInit = {}
   return data.role;
 }
 
-export const getInstitutionSubjects = async (id: string, options: RequestInit = {}): Promise<Subject[]> => {
+export const getInstitutionSubjects = async (id: string, options: RequestInit = {}, queryParams: Record<string, any> = {}): Promise<Subject[]> => {
   const next = {
     ...defaultNextOptions,
     ...options.next,
@@ -69,7 +69,7 @@ export const getInstitutionSubjects = async (id: string, options: RequestInit = 
 
   const response = await fetchWithAuthServer(`/institutions/${id}/subjects`, {
     next
-  });
+  }, queryParams);
 
   return handleApiResponse<Subject[]>(response);
 }

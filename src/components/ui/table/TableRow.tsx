@@ -10,7 +10,7 @@ const TableRow: React.FC<TableRowProps> = ({ children, header = false, className
   const Tag = header ? 'thead' : 'tr';
 
   return (
-    <Tag className={header ? '' : `border-b hover:bg-gray-50 ${className}`}>
+    <Tag className={header ? '' : `${className}`}>
       {children}
     </Tag>
   );

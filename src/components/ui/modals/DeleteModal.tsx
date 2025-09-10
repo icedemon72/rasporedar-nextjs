@@ -88,7 +88,7 @@ const DeleteModal: React.FC<DeleteModalProps> = ({
         </div>
       </div>
     </div>
-  )
+  );
 }
 
-export default DeleteModal
+export default DeleteModal;

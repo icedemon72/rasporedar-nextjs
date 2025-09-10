@@ -78,7 +78,6 @@ const ScheduleStepOne = () => {
           setVal={(newValue) => departmentField.onChange(newValue as OptionType)}
           isMulti={false}
           required={true}
-          isClearable={false}
         />
       </div>
 

@@ -20,6 +20,7 @@ export type Institution = {
 
   code?: string;
   moderatorCode?: string;
+  subjects?: Subject[];
 }
 
 export type Subject = {
@@ -65,8 +66,8 @@ export type ScheduleInstanceDefaultTime = {
 }
 
 export type ScheduleInstanceData = {
-  subject: string;
-  lecturer: string;
+  subject: string | Subject;
+  lecturer: string | Professor;
   from?: string;
   to?: string;
   location?: string;
@@ -90,7 +91,7 @@ export type Schedule = {
   frequency: string;
   groups: string[];
   instances: ScheduleInstance[];
-  institution: string;
+  institution: string | Institution;
   published: boolean;
   style: string;
   subtitle: string;
@@ -102,3 +103,12 @@ export type Schedule = {
 }
 
 export type ExtendedSchedule = Partial<Schedule> & Partial<{ rows?: ScheduleInstance[] }>
+
+export interface SchedulePayload {
+  subject: Subject;
+  lecturer: Professor;
+  time?: { startTime: string; endTime: string } | null;
+  location: string;
+  checkTime?: boolean;
+  checkLocation?: boolean;
+}

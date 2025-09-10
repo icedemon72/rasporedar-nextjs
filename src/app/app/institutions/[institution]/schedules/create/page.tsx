@@ -2,7 +2,7 @@ import ScheduleCreateForm from "@/components/client/schedules/create/ScheduleCre
 import PageWrapper from "@/components/wrappers/PageWrapper";
 import { SchedulesContextProvider } from "@/context/schedules-context";
 import { guardRoleInInstitution } from "@/lib/auth/role-guard";
-import { getInstitution } from "@/lib/fetch/server";
+import { getInstitution, getInstitutionSubjects } from "@/lib/fetch/server";
 import { PageProps } from "@/types/page";
 
 export async function generateMetadata({ params }: PageProps) {
@@ -25,9 +25,11 @@ export default async function SchedulesCreatePage({ params }: PageProps) {
    await guardRoleInInstitution(institution, ['Owner', 'Moderator']);
 
   const [
-    institutionRes
+    institutionRes,
+    subjectsRes,
   ] = await Promise.all([
-      getInstitution(institution)
+      getInstitution(institution),
+      getInstitutionSubjects(institution, {}, { fullInfo: 1 })
   ]);
 
   return (
@@ -43,7 +45,10 @@ export default async function SchedulesCreatePage({ params }: PageProps) {
         ]
       }}
     >
-      <SchedulesContextProvider institution={institutionRes}>
+      <SchedulesContextProvider institution={{
+        ...institutionRes,
+        subjects: subjectsRes
+      }}>
         <ScheduleCreateForm />
       </SchedulesContextProvider>
     </PageWrapper>

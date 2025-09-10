@@ -5,7 +5,7 @@ const Stepper = () => {
   const { step, setStep } = useScheduleContext();
 
   return (
-    <div className="flex justify-center items-center space-x-4">
+    <div className="flex justify-center items-center space-x-4 select-none">
       <div
         onClick={() => setStep(1)}
         className={`w-8 h-8 rounded-full flex items-center justify-center cursor-pointer border-2 transition-colors ${
