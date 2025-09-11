@@ -1,6 +1,6 @@
 import { BasicCreateResponse, InstitutionCreateBody, LoginResponse, RegisterUserBody, UpdateUserBody, User } from "@/types/fetch"
 import { fetchWithAuthClient } from "../auth/auth"
-import { Institution, Professor, Subject } from "@/types/data";
+import { ExtendedSchedule, Institution, Professor, Schedule, Subject } from "@/types/data";
 import { getApiURL } from "@/utils/docker";
 
 export class ApiClient {
@@ -154,6 +154,16 @@ export class ApiClient {
     });
 
     const data: User = await response.json();
+    return data;
+  }
+
+  async saveSchedule(institution: string, body: Omit<ExtendedSchedule, 'id'>): Promise<Schedule> { 
+    const response = await fetchWithAuthClient(`/api/institutions/${institution}/schedules`, {
+      method: 'POST',
+      body: JSON.stringify(body)
+    }, true);
+
+    const data: Schedule = await response.json();
     return data;
   }
 }

@@ -100,14 +100,20 @@ export type Schedule = {
   updatedAt: string;
   validFrom: string;
   validUntil: string;
+  data: any;
 }
 
 export type ExtendedSchedule = Partial<Schedule> & Partial<{ rows?: ScheduleInstance[] }>
 
+export type ScheduleTime = {
+  startTime: string;
+  endTime: string
+}
+
 export interface SchedulePayload {
   subject: Subject;
   lecturer: Professor;
-  time?: { startTime: string; endTime: string } | null;
+  time?: ScheduleTime | null;
   location: string;
   checkTime?: boolean;
   checkLocation?: boolean;

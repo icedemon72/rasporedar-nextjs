@@ -3,7 +3,6 @@
 import React from 'react';
 import clsx from 'clsx';
 import { PlusCircle } from 'lucide-react';
-import { useParams } from 'next/navigation';
 
 import { ExtendedSchedule, Professor, Subject } from '@/types/data';
 import { scheduleCustomStyles } from '@/constants/schedule.styles';
@@ -37,7 +36,6 @@ const ScheduleItem: React.FC<Props> = ({
   dayIndex
 }) => {
   const modal = useModal();
-  // The cell payload your model uses:
   const group = schedule.rows?.[groupIndex];
   const cell = group?.data?.[dayIndex]?.[rowIndex];
 
@@ -64,14 +62,14 @@ const ScheduleItem: React.FC<Props> = ({
     <>
       <div
         className={clsx(
-          'flex flex-col justify-center w-full items-center cursor-pointer group p-4',
+          'flex flex-col justify-center w-full items-center cursor-pointer group p-2',
           style?.colStyle
         )}
         onClick={onClick}
       >
         {(cell?.subject as Subject)?.name ? (
           <div className="relative w-full text-center group-hover:scale-105 transition-all">
-            <div className="w-full flex flex-col justify-center text-center font-bold">
+            <div className="w-full flex flex-col justify-center text-center font-bold text-md">
               {institution ? (
                 <ScheduleLink
                   editable={editable}
@@ -94,7 +92,7 @@ const ScheduleItem: React.FC<Props> = ({
               <ScheduleLink
                 editable={editable}
                 href={`/institutions/${institution}/professors/${(cell?.lecturer as Professor)?._id}`}
-                className="w-full flex justify-center text-sm"
+                className="w-full flex justify-center text-xs"
               >
                 {(cell?.lecturer as Professor)?.name}
               </ScheduleLink>

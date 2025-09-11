@@ -9,6 +9,7 @@ import SelectComponent from '../SelectComponent';
 import { indexOfKeyInArray } from '@/utils/object-arrays';
 import { PROFESSOR_TYPES } from '@/constants/professors';
 import { ExtendedSchedule, Professor, Schedule, ScheduleInstanceData, SchedulePayload, Subject } from '@/types/data';
+import { useAnimateModals } from '@/hooks/use-animate-modal';
 
 /** Types you likely already have; adjust if needed */
 type Id = string;
@@ -23,7 +24,7 @@ interface ScheduleSubjectModalProps {
   data: ScheduleInstanceData;
   /** State coming from parent (availability toggles) */
   /** Actions */
-  onClose: () => void;                       // close modal
+  onClose: () => void;
   onSubmit: (payload: SchedulePayload) => void;
 
   /** Optional delete current cell (only shown if data?.subject exists) */
@@ -43,8 +44,15 @@ const ScheduleSubjectModal: React.FC<ScheduleSubjectModalProps> = ({
   onDelete,
   className,
 }) => {
-  // Animated visibility (like DeleteModal)
-  const [isVisible, setIsVisible] = useState(false);
+  const {
+    isVisible,
+    modalRef,
+    backdropRef,
+    handleClose,
+    handleBackdrop,
+    setIsVisible,
+  } = useAnimateModals(onClose);
+
   const [ isTime, setIsTime ] = useState<boolean>(false);
   const [ isLocation, setIsLocation ] = useState<boolean>(false);
 
@@ -63,10 +71,6 @@ const ScheduleSubjectModal: React.FC<ScheduleSubjectModalProps> = ({
   const [startTime, setStartTime] = useState<string>(data?.from || '');
   const [endTime, setEndTime] = useState<string>(data?.to || '');
   const [location, setLocation] = useState<string>(data?.location || '');
-
-  // Focus & ESC
-  const modalRef = useRef<HTMLDivElement | null>(null);
-  const closeBackdropRef = useRef<HTMLDivElement | null>(null);
 
   // Animate in
   useEffect(() => {
@@ -161,17 +165,6 @@ const ScheduleSubjectModal: React.FC<ScheduleSubjectModalProps> = ({
     handleClose();
   };
 
-  const handleClose = () => {
-    setIsVisible(false);
-    setTimeout(() => onClose(), 200);
-  };
-
-  const handleBackdrop = (e: React.MouseEvent) => {
-    if (e.target === closeBackdropRef.current) handleClose();
-  };
-  
-  console.log('DATA', data);
-
   return (
     <div
       role="dialog"
@@ -182,7 +175,7 @@ const ScheduleSubjectModal: React.FC<ScheduleSubjectModalProps> = ({
         isVisible ? 'opacity-100' : 'opacity-0'
       )}
       onMouseDown={handleBackdrop}
-      ref={closeBackdropRef}
+      ref={backdropRef}
     >
       <div
         ref={modalRef}

@@ -2,7 +2,7 @@
 
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { EMPTY_SCHEDULE_INSTANCE, GENERATE_ROW_WITH_ONE_ITEM, INITIAL_SCHEDULE } from '@/constants/schedule';
-import { ExtendedSchedule, Institution, Schedule, SchedulePayload } from '@/types/data';
+import { ExtendedSchedule, Institution, Schedule, SchedulePayload, ScheduleTime } from '@/types/data';
 import { ModalType, ScheduleModalState } from '@/types/global';
 import { useScheduleDraft } from '@/hooks/storage/use-schedule-draft';
 import { ModalHost } from '@/components/ui/modals/ModalHost';
@@ -11,6 +11,7 @@ import DeleteModal from '@/components/ui/modals/DeleteModal';
 import ScheduleSubjectModal from '@/components/ui/modals/ScheduleSubjectModal';
 import { fetchWithAuthClient } from '@/lib/auth/auth';
 import { deepClone } from '@/utils/deep-clone';
+import { useApi } from './api-context';
 
 interface ScheduleContextProps {
   step: number;
@@ -25,8 +26,8 @@ interface ScheduleContextProps {
   addTime: (groupIndex: number, subjectIndex: number, time: any) => void;
   deleteSubject: (groupIndex: number, subjectIndex: number) => void;
   handleAddRow: (groupIndex: number) => void;
-  handleDeleteRow: (groupIndex: number) => void;
-
+  handleDeleteRow: (groupIndex: number, index?: number) => void;
+  handleDeleteGroup: (groupIndex: number) => void;
   handleAddItem: (payload: SchedulePayload, groupIndex: number, i: number, j: number) => void;
   // NEW: allow callers to clear the draft (e.g., after server save)
   clearDraft: () => void;
@@ -43,6 +44,7 @@ export const SchedulesContextProvider = ({
   institution: Institution;
   children: React.ReactNode;
 }) => {
+  const { api, client } = useApi();
   // 1) preselect an initial value (we’ll merge with draft below)
   const [schedule, setSchedule] = useState<Partial<ExtendedSchedule>>(
     (initialSchedule as Partial<ExtendedSchedule>) ?? INITIAL_SCHEDULE
@@ -66,15 +68,83 @@ export const SchedulesContextProvider = ({
   }, [institution?._id]); // re-run when institution changes
 
   // core actions (pseudo)
-  const saveSchedule = async () => {
-    if (schedule._id) {
-      // TODO: call update
-    } else {
-      // TODO: call create
+  const saveSchedule = async (published = false) => {
+    try {
+      if (!schedule) return;
+
+      const tempRows = deepClone(schedule.rows ?? []);
+
+      for (let i = 0; i < tempRows.length; i++) {
+        for (let j = 0; j < (schedule.days?.length ?? 0); j++) {
+          for (let k = 0; k < tempRows[i].data[j].length; k++) {
+            let item = tempRows[i].data[j][k];
+
+            if (item.subject) {
+              tempRows[i].data[j][k] = {
+                ...item,
+                subject: typeof item.subject === 'object' ? item.subject._id : item.subject
+              };
+
+              if (item.lecturer) {
+                tempRows[i].data[j][k] = {
+                  ...tempRows[i].data[j][k],
+                  lecturer: typeof item.lecturer === 'object' ? item.lecturer._id : item.lecturer
+                };
+              }
+            }
+          }
+        }
+      }
+
+      const body: Partial<Schedule> & { rows: any[] } = {
+        title: schedule.title ?? '',
+        days: schedule.days ?? [],
+        style: schedule.style ?? '',
+        validUntil: schedule.validUntil ?? '',
+        validFrom: schedule.validFrom ?? '',
+        frequency: schedule.frequency ?? '',
+        systemType: schedule.systemType ?? '',
+        subtitle: schedule.subtitle ?? '',
+        comment: schedule.comment ?? '',
+        department: schedule.department ?? '',
+        groups: schedule.groups ?? [],
+        published,
+        rows: tempRows
+      };
+
+      if (schedule._id) {
+        // update existing
+        // await api(
+        //   () => client.updateSchedule(institution._id, schedule._id!, body),
+        //   {
+        //     onSuccess(result) {
+        //       clearDraftInternal();
+        //       console.log('Updated schedule', result);
+        //     },
+        //     onError(err) {
+        //       console.error('Update failed', err);
+        //     }
+        //   }
+        // );
+      } else {
+        // create new
+        await api(
+          () => client.saveSchedule(institution._id, body),
+          {
+            onSuccess(result) {
+              clearDraftInternal();
+              console.log('Created schedule', result);
+            },
+            onError(err) {
+              console.error('Create failed', err);
+            }
+          }
+        );
+      }
+    } catch (err) {
+      console.error(err);
     }
-    // After a successful server save, you can clear the local draft:
-    // clearDraftInternal();
-  };
+  }
 
   const handleAddRow = (groupIndex: number) => {
     setSchedule(prev => {
@@ -86,17 +156,39 @@ export const SchedulesContextProvider = ({
     });
   };
 
-  const handleDeleteRow = (groupIndex: number) => {
+  const handleDeleteRow = (groupIndex: number, index: number = -1) => {
     setSchedule(prev => {
-      const copy = structuredClone(prev);
-      if (!copy.rows || !copy.days) return copy;
-      const row = copy.rows[groupIndex];
-      if (row.data[0].length <= 1) return copy;
-      row.data.forEach(dayData => dayData.pop());
-      row.defaultTimes.pop();
-      return copy;
+      const copy = deepClone(prev);
+      if (!copy.rows) return copy;
+
+      const data = copy.rows![groupIndex].data;
+      const days = copy.days;
+
+      if (
+        !data.length ||
+        index >= data[0].length ||
+        data[0].length === 1 ||
+        !days
+      ) return copy;
+
+      if (index === -1) {
+        days.forEach((_, i: number) => {
+          data[i].pop();
+        });
+        copy.rows![groupIndex].defaultTimes.pop();
+      }
+      else {
+        days.forEach((_, i: number) => {
+					data[i].splice(index, 1);
+				});
+        copy.rows![groupIndex].defaultTimes.splice(index, 1);
+      }
+        
+      return {
+        ...copy
+      };
     });
-  };
+  }
 
   const addSubject = (groupIndex: number, subject: any) => {
     setSchedule(prev => {
@@ -106,10 +198,26 @@ export const SchedulesContextProvider = ({
     });
   };
 
-  const addTime = (groupIndex: number, subjectIndex: number, time: any) => {
-    setSchedule(prev => {
+  const addTime = (groupIndex: number, rowIndex: number, time: ScheduleTime) => {
+    setSchedule((prev) => {
+      if (!prev?.rows) return prev;
+
       const copy = structuredClone(prev);
-      // implement your time placement here
+
+      if (!copy.rows) return copy;
+
+      const row = copy.rows[groupIndex];
+
+      // resize defaultTimes if needed
+      while (row.defaultTimes.length <= rowIndex) {
+        row.defaultTimes.push({ from: '', to: '' });
+      }
+
+      row.defaultTimes[rowIndex] = {
+        from: time.startTime,
+        to: time.endTime
+      };
+
       return copy;
     });
   };
@@ -122,6 +230,19 @@ export const SchedulesContextProvider = ({
     });
   };
 
+  const handleDeleteGroup = (groupIndex: number) => {
+    if (groupIndex < schedule?.groups?.length!) {
+      setSchedule(prev => {
+        if (!prev.rows || !prev.groups) return prev;
+
+        prev.rows.splice(groupIndex, 1);
+        prev.groups.splice(groupIndex, 1);
+
+        return prev;
+      });
+    }
+  }
+
   const handleChange = useCallback(
     <K extends keyof Partial<ExtendedSchedule>>(field: K) =>
       (value: Partial<ExtendedSchedule>[K]) => {
@@ -130,7 +251,6 @@ export const SchedulesContextProvider = ({
     []
   );
 
-  // Ensure rows skeleton exists when groups/days change (as you had)
   useEffect(() => {
     if (!schedule?.groups || !schedule?.days) return;
 
@@ -237,7 +357,8 @@ export const SchedulesContextProvider = ({
         handleAddRow,
         handleDeleteRow,
         clearDraft,
-        handleAddItem
+        handleAddItem,
+        handleDeleteGroup
       }}
     >
       {children}

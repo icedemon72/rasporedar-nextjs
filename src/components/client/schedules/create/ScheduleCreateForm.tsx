@@ -6,10 +6,9 @@ import ScheduleStepOne from '../steps/ScheduleStepOne';
 import ScheduleStepTwo from '../steps/ScheduleStepTwo';
 import Stepper from '../steps/Stepper';
 import clsx from 'clsx';
-import { ChevronLeft } from 'lucide-react';
 
 const ScheduleCreateForm = () => {
-  const { step, setStep } = useScheduleContext();
+  const { step, setStep, saveSchedule } = useScheduleContext();
 
   return (
     <div>
@@ -42,7 +41,7 @@ const ScheduleCreateForm = () => {
               </button>
               <button 
                 className="btn-primary px-4"
-                onClick={() => alert('SAVED!')}
+                onClick={() => saveSchedule()}
               >
                 Sačuvaj raspored
               </button>

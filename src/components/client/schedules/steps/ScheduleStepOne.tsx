@@ -14,7 +14,7 @@ import ListItem from '@/components/ui/lists/ListItem';
 
 const ScheduleStepOne = () => {
   const inputRef = useRef<HTMLInputElement | null>(null);
-  const { schedule, institution, handleChange } = useScheduleContext();
+  const { schedule, institution, handleChange, handleDeleteGroup: deleteGroup } = useScheduleContext();
 
   const departmentField = useScheduleSelectField('department', institution.departments.map(d => ({ value: d, label: d })));
   const systemTypeField = useScheduleSelectField('systemType', SCHEDULE_TYPES, SCHEDULE_TYPES[0]);
@@ -36,6 +36,7 @@ const ScheduleStepOne = () => {
     const toDelete = deleteItemFromArray(temp, index);
     if (toDelete) {
       handleChange('groups')(toDelete);
+      deleteGroup(index);
     }
   }
 

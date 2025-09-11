@@ -17,7 +17,6 @@ export async function generateMetadata({ params }: PageProps) {
   }
 }
 
-
 export default async function SchedulesCreatePage({ params }: PageProps) {
   const { institution } = await params;
   // await guardRoleInInstitution(institution, ['Owner', 'Moderator']);
