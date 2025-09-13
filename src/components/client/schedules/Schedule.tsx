@@ -40,7 +40,7 @@ const Schedule: React.FC<ScheduleProps> = ({ editable = false, schedule }) => {
 
       <tbody>
         {
-          schedule.rows?.map((group, groupIndex) => (
+          (schedule.rows || schedule.instances)?.map((group, groupIndex) => (
             <React.Fragment key={groupIndex}>
               {
                 schedule.groups && schedule.groups.length !== 1 && (

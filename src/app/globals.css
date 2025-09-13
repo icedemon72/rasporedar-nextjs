@@ -92,6 +92,14 @@
   .label-primary {
     @apply block w-full font-semibold;
   }
+
+  .link {
+    @apply text-orange-600 hover:text-orange-400;
+  }
+}
+
+.main a {
+  @apply link;
 }
 
 /* global.css */
@@ -118,6 +126,7 @@ h5 {
 h6 {
   @apply text-xs sm:text-sm md:text-base lg:text-lg font-normal leading-normal;
 }
+
 
 /* p, a {
   @apply text-base sm:text-base md:text-lg lg:text-xl leading-relaxed;

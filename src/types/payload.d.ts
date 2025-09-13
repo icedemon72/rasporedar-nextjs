@@ -129,6 +129,22 @@ export interface IBlog extends PayloadResponseDefaults, BlogBase {
   seo: SEO;
 }
 
+interface NewsBase {
+  slug: string;
+  title: string;
+  excerpt: string;  
+  publishedDate: string;
+  featuredImage: PayloadMedia;
+  status: 'published' | 'archived' | 'draft';
+  tags: string[];
+}
+
+
+export interface INews extends PayloadResponseDefaults, BlogBase {
+  content: SerializedEditorState;
+  seo: SEO;
+}
+
 export type Priority = "above" | "below";
 
 export type CallToActionCard = {

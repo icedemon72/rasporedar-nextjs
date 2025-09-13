@@ -34,13 +34,13 @@ export async function middleware(request: NextRequest) {
         })
 
         if (!refreshResponse.ok) {
-          const loginUrl = new URL('/login', request.url)
+          const loginUrl = new URL('/auth/login', request.url)
           loginUrl.searchParams.set('redirectTo', pathname)
           return NextResponse.redirect(loginUrl)
         }
       }
     } catch (error) {
-      const loginUrl = new URL('/login', request.url)
+      const loginUrl = new URL('/auth/login', request.url)
       loginUrl.searchParams.set('redirectTo', pathname)
       return NextResponse.redirect(loginUrl)
     }

@@ -5,6 +5,7 @@ export const DEFAULT_DAYS =  ['Ponedeljak', 'Utorak', 'Sreda', 'Četvrtak', 'Pet
 
 export const INITIAL_SCHEDULE: Omit<Schedule, ScheduleCreateOmit> & { rows: any } = {
   comment: '',
+  data: [],
   days: DEFAULT_DAYS,
   department: '',
   frequency: '',

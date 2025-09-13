@@ -20,7 +20,7 @@ export function useScheduleDraft(
 
   return useDraftStorage<Partial<ExtendedSchedule>>(
     DRAFTS_KEY,
-    institutionId,
+    institutionId ?? null,   // eksplicitno null kad nema ID
     schedule,
     { debounce: 300, serialize }
   );

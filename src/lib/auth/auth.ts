@@ -44,7 +44,7 @@ export async function fetchWithAuthClient(endpoint: string, options: RequestInit
       return retryResponse
     } else {
       // Refresh failed, redirect to login
-      window.location.href = "/login"
+      window.location.href = "/auth/login"
       throw new Error("Authentication failed")
     }
   }

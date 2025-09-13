@@ -1,9 +1,16 @@
 import InstitutionCards from "@/components/client/institutions/InstitutionCards";
+import ViewButton from "@/components/ui/buttons/ViewButton";
 import DashboardCard from "@/components/ui/dashboard/DashboardCard";
+import Table from "@/components/ui/table/Table";
+import TableCell from "@/components/ui/table/TableCell";
+import TableRow from "@/components/ui/table/TableRow";
 import PageWrapper from "@/components/wrappers/PageWrapper";
-import { getInstitution } from "@/lib/fetch/server";
+import { includesRole } from "@/lib/auth/role-guard";
+import { getInstitution, getInstitutionSchedules } from "@/lib/fetch/server";
 import { PageProps } from "@/types/page";
+import { formatDate } from "@/utils/date";
 import { BookOpen, Calendar, UserCog, Users } from "lucide-react";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 
 export async function generateMetadata({ params }: PageProps) {
@@ -21,9 +28,15 @@ export async function generateMetadata({ params }: PageProps) {
 
 export default async function InstitutionPage({ params }: PageProps) {
   const { institution } = await params;
-  const institutionRes = await getInstitution(institution);
-  
-  console.log(institutionRes);
+  const [
+    institutionRes,
+    schedulesRes
+  ] = await Promise.all([
+    getInstitution(institution),
+    getInstitutionSchedules(institution, {}, {
+      active: true
+    })
+  ]);
 
   if (!institutionRes) return notFound();
 
@@ -71,7 +84,35 @@ export default async function InstitutionPage({ params }: PageProps) {
 
         <div className="space-y-2">
           <h2 className="text-lg font-semibold">Aktivni rasporedi</h2>
-          <p>Hm... izgleda da nema aktivnih rasporeda</p>
+          <Table>
+            <TableRow header>
+                <TableRow>
+                  <TableCell header>#</TableCell>
+                  <TableCell header>Naslov rasporeda</TableCell>
+                  <TableCell header>Važenje</TableCell>
+                  <TableCell header>Akcije</TableCell>
+                </TableRow>
+              </TableRow>
+              <tbody>
+                {
+                  schedulesRes.map((schedule, index) => (
+                    <TableRow key={schedule._id}>
+                      <TableCell>{ index + 1}</TableCell>
+                      <TableCell>
+                        <Link key={index} href={`/app/institutions/${institution}/schedules/${schedule._id}`}>{ schedule.title }</Link>
+                      </TableCell>
+                      <TableCell>{ formatDate(schedule.validFrom) } - { formatDate(schedule.validUntil) }</TableCell>
+                      <TableCell>
+                        <div className="flex gap-2">
+                          <ViewButton link={`/app/institutions/${institution}/schedules/${schedule._id}`} />
+                        </div>
+                      </TableCell>
+
+                    </TableRow>
+                  ))
+                }
+              </tbody>
+          </Table>
         </div>
       </div>
     </PageWrapper>

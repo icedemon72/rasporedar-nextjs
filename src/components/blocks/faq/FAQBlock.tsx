@@ -12,7 +12,7 @@ const FAQBlock: React.FC<FAQBlockType> = ({
   if (!accordion?.length) return null;
 
   return (
-      <section className="flex gap-4 max-w-4xl mx-auto">
+      <section className="flex gap-4 max-w-4xl mx-auto main">
         <div className="mb-12 max-w-sm flex-0">
           <h2 className="text-3xl font-bold text-gray-900">{title}</h2>
           {

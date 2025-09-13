@@ -3,7 +3,6 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { EMPTY_SCHEDULE_INSTANCE, GENERATE_ROW_WITH_ONE_ITEM, INITIAL_SCHEDULE } from '@/constants/schedule';
 import { ExtendedSchedule, Institution, Schedule, SchedulePayload, ScheduleTime } from '@/types/data';
-import { ModalType, ScheduleModalState } from '@/types/global';
 import { useScheduleDraft } from '@/hooks/storage/use-schedule-draft';
 import { ModalHost } from '@/components/ui/modals/ModalHost';
 import { useModal } from '@/hooks/use-modal';
@@ -12,11 +11,12 @@ import ScheduleSubjectModal from '@/components/ui/modals/ScheduleSubjectModal';
 import { fetchWithAuthClient } from '@/lib/auth/auth';
 import { deepClone } from '@/utils/deep-clone';
 import { useApi } from './api-context';
+import { toast } from 'react-toastify';
+import { useRouter } from 'next/navigation';
 
 interface ScheduleContextProps {
   step: number;
   schedule: ExtendedSchedule;
-  // modal: ScheduleModalState;
   institution: Institution;
   setStep: (step: number) => void;
   setSchedule: React.Dispatch<React.SetStateAction<Partial<ExtendedSchedule>>>;
@@ -44,30 +44,26 @@ export const SchedulesContextProvider = ({
   institution: Institution;
   children: React.ReactNode;
 }) => {
+  const router = useRouter();
   const { api, client } = useApi();
-  // 1) preselect an initial value (we’ll merge with draft below)
   const [schedule, setSchedule] = useState<Partial<ExtendedSchedule>>(
     (initialSchedule as Partial<ExtendedSchedule>) ?? INITIAL_SCHEDULE
   );
 
-  const [step, setStep] = useState<number>(2);
+  const [step, setStep] = useState<number>(1);
   const modal = useModal();
 
-  // 2) hook handles auto-saving; we can also read an existing draft
   const { getOne: getDraft, clearOne: clearDraftInternal } = useScheduleDraft(institution?._id, schedule);
 
-  // 3) on mount or when institution changes, prefer a local draft (if any) over empty
   useEffect(() => {
-    // don’t override a non-empty server schedule unless you want to prefer local drafts explicitly
     const hasServerData = Boolean(initialSchedule && (initialSchedule as any)?._id);
     const draft = getDraft?.();
     if (draft && !hasServerData) {
       setSchedule(prev => ({ ...prev, ...draft }));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [institution?._id]); // re-run when institution changes
+  }, [institution?._id]);
 
-  // core actions (pseudo)
   const saveSchedule = async (published = false) => {
     try {
       if (!schedule) return;
@@ -108,7 +104,7 @@ export const SchedulesContextProvider = ({
         comment: schedule.comment ?? '',
         department: schedule.department ?? '',
         groups: schedule.groups ?? [],
-        published,
+        published: true,
         rows: tempRows
       };
 
@@ -133,7 +129,8 @@ export const SchedulesContextProvider = ({
           {
             onSuccess(result) {
               clearDraftInternal();
-              console.log('Created schedule', result);
+              toast.success('Raspored uspešno kreiran.');
+              router.push(`/app/institutions/${institution._id}/schedules/${result._id}`);
             },
             onError(err) {
               console.error('Create failed', err);
@@ -281,6 +278,7 @@ export const SchedulesContextProvider = ({
 
   const clearDraft = useCallback(() => {
     clearDraftInternal();
+    setSchedule({});
   }, [clearDraftInternal]);
 
   const handleAddItem = async (

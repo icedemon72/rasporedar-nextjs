@@ -76,7 +76,7 @@ const InstitutionLink: React.FC<InstitutionLinkProps> = ({ href, icon, label }) 
   return (
     <Link
       href={href}
-      className="flex items-center gap-2 text-sm text-gray-700 hover:text-primary-600 transition-colors"
+      className="flex items-center gap-2 text-sm text-gray-700 hover:text-primary transition-colors"
     >
       {icon}
       {label}

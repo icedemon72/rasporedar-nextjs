@@ -13,7 +13,7 @@ type Options<T> = {
 
 export function useDraftStorage<T>(
   storageKey: string,
-  entityId: string | undefined,
+  entityId: string | undefined | null,
   value: T | undefined,
   opts: Options<T> = {}
 ) {
@@ -33,6 +33,7 @@ export function useDraftStorage<T>(
 
   const setOne = useCallback(
     (draft: T | undefined) => {
+      console.log('I RUN');
       if (!entityId) return;
       const all = getAll();
       if (draft === undefined) {

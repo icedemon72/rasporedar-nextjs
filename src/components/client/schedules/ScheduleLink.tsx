@@ -21,7 +21,7 @@ const ScheduleLink = ({
 
   return (
     <Link href={href} className={className}>
-      <div className="hover:bg-slate-400 rounded-sm p-1 hover:underline">{children}</div>
+      <div>{children}</div>
     </Link>
   );
 };

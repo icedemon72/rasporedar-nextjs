@@ -36,7 +36,7 @@ const ScheduleItem: React.FC<Props> = ({
   dayIndex
 }) => {
   const modal = useModal();
-  const group = schedule.rows?.[groupIndex];
+  const group = (schedule.rows || schedule.instances)?.[groupIndex];
   const cell = group?.data?.[dayIndex]?.[rowIndex];
 
   const { institution, handleAddItem } = useScheduleContext();
@@ -54,7 +54,6 @@ const ScheduleItem: React.FC<Props> = ({
       onSubmit: (payload: Payload) => {
         handleAddItem(payload, groupIndex, rowIndex, dayIndex);
       }
-
     })
   } : undefined;
 
@@ -68,12 +67,12 @@ const ScheduleItem: React.FC<Props> = ({
         onClick={onClick}
       >
         {(cell?.subject as Subject)?.name ? (
-          <div className="relative w-full text-center group-hover:scale-105 transition-all">
+          <div className="relative w-full text-center">
             <div className="w-full flex flex-col justify-center text-center font-bold text-md">
               {institution ? (
                 <ScheduleLink
                   editable={editable}
-                  href={`/institutions/${institution}/subjects/${(cell?.lecturer as Professor)?._id}`}
+                  href={`/app/institutions/${institution._id}/subjects/${(cell?.subject as Subject)?._id}`}
                 >
                   {(cell?.subject as Subject)?.name}
                 </ScheduleLink>
@@ -91,7 +90,7 @@ const ScheduleItem: React.FC<Props> = ({
             {(cell?.lecturer as Professor)?.name && institution && (
               <ScheduleLink
                 editable={editable}
-                href={`/institutions/${institution}/professors/${(cell?.lecturer as Professor)?._id}`}
+                href={`/app/institutions/${institution._id}/professors/${(cell?.lecturer as Professor)?._id}`}
                 className="w-full flex justify-center text-xs"
               >
                 {(cell?.lecturer as Professor)?.name}

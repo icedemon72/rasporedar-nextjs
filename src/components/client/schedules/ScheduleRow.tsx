@@ -29,7 +29,7 @@ const ScheduleRow: React.FC<ScheduleRowProps> = ({
 }) => {
   const modal = useModal();
   const { handleDeleteRow, addTime } = useScheduleContext();
-  const group = schedule.rows?.[groupIndex];
+  const group = (schedule.rows || schedule.instances)?.[groupIndex];
 
   const handleOpenTime = () => {
     modal.open('time', {

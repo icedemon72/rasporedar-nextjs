@@ -1,3 +1,4 @@
+import ScheduleDeleteButton from "@/components/client/schedules/ScheduleDeleteButton";
 import EditButton from "@/components/ui/buttons/EditButton";
 import ViewButton from "@/components/ui/buttons/ViewButton";
 import SearchInput from "@/components/ui/SearchInput";
@@ -34,7 +35,7 @@ export default async function SchedulesPage({ params }: PageProps) {
   ]);
 
   const schedules = await getInstitutionSchedules(institution, {}, {
-    active: role !== 'User'
+    // active: role !== 'User'
   });
   
 
@@ -86,7 +87,7 @@ export default async function SchedulesPage({ params }: PageProps) {
                       includesRole(role, ['Owner', 'Moderator']) && (
                         <>
                           <EditButton link={`/app/institutions/${institution}/schedules/${schedule._id}/edit`} />
-                          {/* <ProfessorDeleteButton schedule={schedule} /> */}
+                          <ScheduleDeleteButton schedule={schedule} />
                         </>
                       )
                     }

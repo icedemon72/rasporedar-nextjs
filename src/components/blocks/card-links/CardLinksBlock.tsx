@@ -11,7 +11,7 @@ const CardLinksBlock: React.FC<CardLinksBlockType> = ({
 }) => {
   const isAbove = priority === 'above';
   return (
-    <section className="py-16 bg-white">
+    <section className="py-16 bg-white main">
       <div className="max-w-6xl mx-auto px-4">
         {title && <h2 className="text-3xl font-bold text-gray-800 mb-4">{title}</h2>}
         {description && <p className="text-lg text-gray-600 mb-10">{description}</p>}
@@ -39,7 +39,7 @@ const CardLinksBlock: React.FC<CardLinksBlockType> = ({
               }
               <div className="p-6">
                 <h3 className="text-xl font-semibold text-gray-800 mb-2">
-                  <Link href={card.url} className="hover:underline">
+                  <Link href={card.url}>
                     {card.title}
                   </Link>
                 </h3>

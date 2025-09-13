@@ -1,8 +1,12 @@
 import InstitutionCard from "@/components/ui/institutions/InstitutionCard";
 import PageWrapper from "@/components/wrappers/PageWrapper";
 import { getUserInstitutions } from "@/lib/fetch/server";
-import { Institution } from "@/types/data";
-import Link from "next/link";
+
+export async function generateMetadata() {
+  return {
+    title: `Moje grupe | ${process.env.NEXT_PUBLIC_APP_NAME}`
+  }
+}
 
 export default async function InstitutionsPage() {
   const institutions = await getUserInstitutions();

@@ -1,4 +1,4 @@
-import { IBlog, ISiteSettings, PayloadFetchOptions, PayloadPage, PayloadQueryParams, PayloadQueryResponse } from '@/types/payload';
+import { IBlog, INews, ISiteSettings, PayloadFetchOptions, PayloadPage, PayloadQueryParams, PayloadQueryResponse } from '@/types/payload';
 import { headers} from 'next/headers';
 import { buildPayloadURL } from './buildPayloadUrl';
 import { getPayloadURL } from '@/utils/docker';
@@ -148,5 +148,22 @@ export async function getBlogs(limit: number = 100, page: number = 1, customPara
     }
   });
 
+  return response;
+}
+
+export async function getNews(limit: number = 100, page: number = 1, customParams: PayloadQueryParams = {}): Promise<PayloadQueryResponse<INews>> {
+  const params: PayloadQueryParams = {
+    limit,
+    page,
+    ...customParams
+  }
+
+  const url = buildPayloadURL('/api/news', params);
+  const response: PayloadQueryResponse<INews> = await payloadCMSFetch(url, {
+    next: {
+      tags: ['news', `news-${limit}-${customParams.page}`],
+    }
+  });
+  
   return response;
 }

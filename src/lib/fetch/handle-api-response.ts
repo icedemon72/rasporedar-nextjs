@@ -4,7 +4,7 @@ export async function handleApiResponse<T>(response: Response): Promise<T> {
   if (!response.ok) {
     const errorData = await safeJson(response);
 
-    notFound(); // Trigger 404 page
+    // notFound(); // Trigger 404 page
 
     // Optional: Handle unauthorized or log other errors
     console.error(`API Error (${response.status}):`, errorData?.message || response.statusText);

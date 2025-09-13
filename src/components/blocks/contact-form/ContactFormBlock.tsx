@@ -15,7 +15,7 @@ export const ContactFormBlock: React.FC<ContactFormBlockType> = ({
 
         {
           subtitle && (
-            <div className="prose" dangerouslySetInnerHTML={{ __html: toHTML(subtitle) }} />
+            <div className="prose main" dangerouslySetInnerHTML={{ __html: toHTML(subtitle) }} />
           )
         }
 

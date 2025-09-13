@@ -14,8 +14,8 @@ export default function BlogList({
   totalPages: number;
 }) {
   const [blogs, setBlogs] = useState<IBlog[]>(initialBlogs);
-  const [page, setPage] = useState(1);
-  const [loading, setLoading] = useState(false);
+  const [page, setPage] = useState<number>(1);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const loadMore = async () => {
     if (page >= totalPages) return;

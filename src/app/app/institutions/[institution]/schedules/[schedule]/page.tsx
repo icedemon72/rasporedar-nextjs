@@ -50,10 +50,14 @@ export default async function SchedulePage({ params }: PageProps) {
           subjects: []
         }}
       >
+        <h1>{ scheduleRes.title }</h1>
+        <h2>{ scheduleRes.subtitle }</h2>
+        
         <Schedule
           editable={false}
           schedule={scheduleRes}
         />
+        <p>{ scheduleRes.comment }</p>
       </SchedulesContextProvider>
     </PageWrapper>
   );

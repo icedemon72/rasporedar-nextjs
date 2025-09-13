@@ -1,3 +1,5 @@
+"use client";
+
 import { BasicCreateResponse, InstitutionCreateBody, LoginResponse, RegisterUserBody, UpdateUserBody, User } from "@/types/fetch"
 import { fetchWithAuthClient } from "../auth/auth"
 import { ExtendedSchedule, Institution, Professor, Schedule, Subject } from "@/types/data";
@@ -164,6 +166,17 @@ export class ApiClient {
     }, true);
 
     const data: Schedule = await response.json();
+    return data;
+  }
+
+  async deleteSchedule(institution: string, schedule: string) {
+    const response = await fetchWithAuthClient(
+      `/api/institutions/${institution}/schedules/${schedule}`,
+      { method: 'DELETE' },
+      true
+    );
+
+    const data = await response.json();
     return data;
   }
 }

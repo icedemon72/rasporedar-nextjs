@@ -13,7 +13,6 @@ interface NavbarProps {
 }
 
 const Navbar: React.FC<NavbarProps> = ({
-  userLoggedIn = null,
   navigationBar
 }) => {
   return (

@@ -10,7 +10,7 @@ const WYSIWYGBlock: React.FC<WYSIWYGBlockType> = ({
   if (!element?.length) return null;
 
   return (
-    <div dangerouslySetInnerHTML={{ __html: element }} />
+    <div className="main" dangerouslySetInnerHTML={{ __html: element }} />
   );
 }
 
