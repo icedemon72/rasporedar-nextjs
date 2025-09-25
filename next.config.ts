@@ -9,10 +9,19 @@ const nextConfig: NextConfig = {
         hostname: process.env.NEXT_PUBLIC_PAYLOAD_CMS_URL as string,
         port: "",
         pathname: "/**",
-      },  
+      },
     ],
-  unoptimized: true,
-},
+    unoptimized: true,
+  },
+  async redirects() {
+    return [
+      {
+        source: '/blogovi',
+        destination: '/blogs',
+        permanent: true,
+      },
+    ]
+  }
 };
 
 export default nextConfig;

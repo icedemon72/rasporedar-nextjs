@@ -38,6 +38,7 @@ export default async function NewsPage() {
   return (
     <PageWrapper
       title={'Novosti'}
+      className="border-0"
       breadcrumbs={{
         links: [
           { label: 'Početna', url: '/' },

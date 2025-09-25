@@ -96,11 +96,7 @@ export type IFooter = {
   copyright?: string;
   staticPages?: Array<{
     label: string;
-    page: string | {
-      id: string;
-      slug: string;
-      title: string;
-    };
+    page: string;
   }>;
 };
 

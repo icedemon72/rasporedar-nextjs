@@ -1,7 +1,6 @@
 import React from 'react'
 import { BreadcrumbLink } from '@/types/global';
 import Breadcrumbs from '../ui/nav/Breadcrumbs';
-import CardContainer from '../ui/containers/CardContainer';
 import clsx from 'clsx';
 
 interface PageWrapperProps {
